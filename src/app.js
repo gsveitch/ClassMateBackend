@@ -65,8 +65,6 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-//attempted api call to google calendar
-
 // axios({
 //   method: 'get',
 //   url:'https://www.googleapis.com/calendar/v3/calendars/sfm05pn42d41k0f14gsdbkgfug@group.calendar.google.com/events'
@@ -77,7 +75,5 @@ passport.use(new GoogleStrategy({
 //   .catch(error =>{
 //     console.error(error);
 //   });
-
-//
 
 module.exports = app;
