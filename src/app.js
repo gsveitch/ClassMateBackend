@@ -4,12 +4,19 @@ const compress = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
 const logger = require('winston');
+const axios = require('axios');
 
 const feathers = require('@feathersjs/feathers');
+
+const authentication = require('@feathersjs/authentication');
+const jwt = require('@feathersjs/authentication-jwt');
+const oauth2 = require('@feathersjs/authentication-oauth2');
+const GoogleStrategy = require('passport-google').Strategy;
+
+
 const configuration = require('@feathersjs/configuration');
 const express = require('@feathersjs/express');
 const socketio = require('@feathersjs/socketio');
-
 
 const middleware = require('./middleware');
 const services = require('./services');
@@ -18,10 +25,19 @@ const channels = require('./channels');
 
 const app = express(feathers());
 
-import {create} from 'apisauce'
-
 // Load app configuration
 app.configure(configuration());
+
+app.configure(authentication({ secret: 'super secret' }));
+app.configure(jwt());
+app.configure(oauth2({
+  name: 'google',
+  Strategy: GoogleStrategy,
+  clientID: process.env.GOOGLECALENDARCLIENTID,
+  clientSecret: process.env.GOOGLECALENDARSECRET,
+  scope: ['public_profile', 'awinste@gmail.com']
+}));
+
 // Enable CORS, security, compression, favicon and body parsing
 app.use(cors());
 app.use(helmet());
@@ -51,9 +67,16 @@ app.hooks(appHooks);
 
 //attempted api call to google calendar
 
-const api = create({ baseURL: 'https://www.googleapis.com/calendar/v3/calendars/sfm05pn42d41k0f14gsdbkgfug%40group.calendar.google.com/events?key=AIzaSyBZm3L5f_BdT-iEBusxDMyIkLmK4pCvrBg'});
-
-
+axios({
+  method: 'get',
+  url:'https://www.googleapis.com/calendar/v3/calendars/sfm05pn42d41k0f14gsdbkgfug@group.calendar.google.com/events'
+})
+  .then(response =>{
+    console.log(response);
+  })
+  .catch(error =>{
+    console.error(error);
+  });
 
 //
 
