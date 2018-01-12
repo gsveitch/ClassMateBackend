@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const logger = require('winston');
 const axios = require('axios');
+const passport = require('passport');
 
 const feathers = require('@feathersjs/feathers');
 
@@ -17,6 +18,8 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 require('dotenv').load();
+
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const app = express(feathers());
 
@@ -49,6 +52,18 @@ app.use(express.notFound());
 app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CALENDAR_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CALENDAR_SECRET,
+  callbackURL: `https://www.googleapis.com/calendar/v3/calendars/sfm05pn42d41k0f14gsdbkgfug%40group.calendar.google.com/events?key=${this.clientID}`
+},
+  function (accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
 
 //attempted api call to google calendar
 
