@@ -22,6 +22,7 @@ const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
+require('dotenv').load();
 
 const app = express(feathers());
 
@@ -33,8 +34,8 @@ app.configure(jwt());
 app.configure(oauth2({
   name: 'google',
   Strategy: GoogleStrategy,
-  clientID: process.env.GOOGLECALENDARCLIENTID,
-  clientSecret: process.env.GOOGLECALENDARSECRET,
+  clientID: process.env.GOOGLE_CALENDAR_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CALENDAR_SECRET,
   scope: ['public_profile', 'awinste@gmail.com']
 }));
 
