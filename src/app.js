@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const logger = require('winston');
 const axios = require('axios');
 const passport = require('passport');
+const GoogleAuth = require('google-auth-library');
+const google = require('googleapis');
 
 const feathers = require('@feathersjs/feathers');
 
@@ -22,6 +24,7 @@ require('dotenv').load();
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const app = express(feathers());
+var OAuth2 = google.auth.OAuth2;
 
 // Load app configuration
 app.configure(configuration());
@@ -48,7 +51,7 @@ app.configure(services);
 app.configure(channels);
 
 // Configure a middleware for 404s and the error handler
-app.use(express.notFound());
+// app.use(express.notFound());
 app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
@@ -64,6 +67,32 @@ passport.use(new GoogleStrategy({
     });
   }
 ));
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile'] }));
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    console.log('successful authentication');
+    res.redirect('/');
+  });
+
+app.post('/login', (req, res) =>{
+  console.log('post in server being hit');
+  var oauth2Client = new OAuth2(
+    process.env.GOOGLE_CALENDAR_CLIENT_ID,
+    process.env.GOOGLE_CALENDAR_SECRET,
+  );
+
+  var scopes = [
+    'https://www.googleapis.com/auth/calendar'
+  ];
+
+  
+
+});
 
 // axios({
 //   method: 'get',
