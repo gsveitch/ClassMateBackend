@@ -59,7 +59,7 @@ app.post('/login', (req,res) => {
         'secret', {
           expiresIn: 24 * 60 * 60
         });
-        res.status(201).send(payload.name);
+        res.status(201).send(payload);
       }
     }
   );
