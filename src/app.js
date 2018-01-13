@@ -20,6 +20,7 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 require('dotenv').load();
+const db = require('../app/seeders/db.js');
 
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
