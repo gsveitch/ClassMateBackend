@@ -14,6 +14,8 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const google = require('googleapis');
+const googleAuth = require('google-auth-library');
+var gcal = require('google-calendar');
 const jwt = require('jsonwebtoken');
 
 const OAuth2 = google.auth.OAuth2;
@@ -43,6 +45,8 @@ app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
 
+const scopes = ['https://www.googleapis.com/auth/calendar.readonly'];
+
 app.post('/login', (req,res) => {
   const user = new OAuth2(req.body.idtoken, '', '');
   user.verifyIdToken(
@@ -53,12 +57,27 @@ app.post('/login', (req,res) => {
         console.error(err);
       }else{
         let payload = login.getPayload();
-        let JWT = jwt.sign({
-          user: user.id
-        },
-        'secret', {
-          expiresIn: 24 * 60 * 60
+        // let JWT = jwt.sign({
+        //   user: user.id
+        // },
+        // 'secret', {
+        //   expiresIn: 24 * 60 * 60
+        // });
+
+        let jwtClient = new google.auth.JWT(
+          payload.email,
+          null,
+          process.env.GOOGLE_CALENDAR_CLIENT_ID,
+          scopes
+        );
+        jwtClient.authorize((err, tokens) =>{
+          if(err){
+            console.error(err);
+          }else{
+            console.log('connected successfully!');
+          }
         });
+        
         res.status(201).send(payload);
       }
     }
