@@ -53,14 +53,13 @@ app.post('/login', (req,res) => {
         console.error(err);
       }else{
         let payload = login.getPayload();
-        console.log('payload is ', payload);
         let JWT = jwt.sign({
           user: user.id
         },
         'secret', {
           expiresIn: 24 * 60 * 60
         });
-        res.status(201).send('user has authenticated from server with oAuth2');
+        res.status(201).send(payload.name);
       }
     }
   );
