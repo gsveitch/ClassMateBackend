@@ -13,6 +13,11 @@ const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
+const google = require('googleapis');
+const jwt = require('jsonwebtoken');
+
+const OAuth2 = google.auth.OAuth2;
+
 require('dotenv').load();
 
 const app = express(feathers());
@@ -39,8 +44,26 @@ app.use(express.errorHandler({ logger }));
 app.hooks(appHooks);
 
 app.post('/login', (req,res) => {
-  console.log(req.body);
-  res.send('user has logged in')
+  const user = new OAuth2(req.body.idtoken, '', '');
+  user.verifyIdToken(
+    req.body.idtoken,
+    process.env.GOOGLE_CALENDAR_CLIENT_ID,
+    (err, login) =>{
+      if(err){
+        console.error(err);
+      }else{
+        let payload = login.getPayload();
+        console.log('payload is ', payload);
+        let JWT = jwt.sign({
+          user: user.id
+        },
+        'secret', {
+          expiresIn: 24 * 60 * 60
+        });
+        res.status(201).send('user has authenticated from server with oAuth2');
+      }
+    }
+  );
 });
 
 module.exports = app;
