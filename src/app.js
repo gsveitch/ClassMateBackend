@@ -15,10 +15,10 @@ const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const google = require('googleapis');
 const googleAuth = require('google-auth-library');
-var gcal = require('google-calendar');
 const jwt = require('jsonwebtoken');
+const db = require('../app/seeders/db.js');
 
-const OAuth2 = google.auth.OAuth2;
+let OAuth2Client = google.auth.OAuth2;
 
 require('dotenv').load();
 
@@ -48,40 +48,50 @@ app.hooks(appHooks);
 const scopes = ['https://www.googleapis.com/auth/calendar.readonly'];
 
 app.post('/login', (req,res) => {
-  const user = new OAuth2(req.body.idtoken, '', '');
-  user.verifyIdToken(
+  const client = new OAuth2Client(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
+  client.verifyIdToken(
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
     (err, login) =>{
       if(err){
         console.error(err);
       }else{
-        let payload = login.getPayload();
-        // let JWT = jwt.sign({
-        //   user: user.id
-        // },
-        // 'secret', {
-        //   expiresIn: 24 * 60 * 60
-        // });
-
-        let jwtClient = new google.auth.JWT(
-          payload.email,
-          null,
-          process.env.GOOGLE_CALENDAR_CLIENT_ID,
-          scopes
-        );
-        jwtClient.authorize((err, tokens) =>{
-          if(err){
-            console.error(err);
-          }else{
-            console.log('connected successfully!');
-          }
+        let userPayload = login.getPayload();
+        let JWT = jwt.sign({
+          client: client.id
+        },
+        'secret', {
+          expiresIn: 24 * 60 * 60
         });
-        
-        res.status(201).send(payload);
+        res.status(201).send(userPayload);
       }
     }
   );
 });
+      //   function authorize(credentials) {
+      //     var clientSecret = process.env.GOOGLE_CALENDAR_SECRET;
+      //     var clientId = process.env.GOOGLE_CALENDAR_CLIENT_ID;
+      //     var redirectUrl = '';
+      //     var auth = new googleAuth();
+      //     var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+      //     oauth2Client.credentials = JSON.parse(token);
+      //   }
+      // }
+
+    //   let calendar = google.calendar('v3');
+
+    //   calendar.events.list({
+    //     auth: client,
+    //     calendarId: 'sfm05pn42d41k0f14gsdbkgfug@group.calendar.google.com',
+    //   }, (err, response) =>{
+    //     if(err){
+    //       console.error('The API returned error: ',err);
+    //       return;
+    //     }else{
+    //       console.log('response from API is ', response);
+    //     }
+    //   });
+    //   res.status(201).send(userPayload);
+    // });
 
 module.exports = app;
