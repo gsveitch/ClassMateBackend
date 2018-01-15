@@ -9,7 +9,6 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       id_assignment: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Assignments',
@@ -17,7 +16,6 @@ module.exports = {
         },
       },
       id_participant: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Participants',
