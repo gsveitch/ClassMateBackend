@@ -69,9 +69,10 @@ app.post('/login', (req,res) => {
         'secret', {
           expiresIn: 24 * 60 * 60
         });
-        userDB.findOrCreateTeacher(payload).then(teacher => {
-          res.status(201).send(teacher);
-        })
+        userDB.findOrCreateTeacher(payload)
+          .then((teacher) => {
+            res.status(201).send(teacher);
+          });
       }
     }
   );
