@@ -51,7 +51,7 @@ app.post('/login', (req,res) => {
   const client = new OAuth2Client(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   client.verifyIdToken(
     req.body.idtoken,
-    [process.env.GOOGLE_ANDROID_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID],
+    process.env.GOOGLE_CALENDAR_CLIENT_ID,
     (err, login) =>{
       if(err){
         console.error(err);
@@ -67,6 +67,11 @@ app.post('/login', (req,res) => {
       }
     }
   );
+});
+
+app.post('/studentLogin', (req,res) => {
+  console.log('student login req body is ', req.body);
+  
 });
       //   function authorize(credentials) {
       //     var clientSecret = process.env.GOOGLE_CALENDAR_SECRET;
