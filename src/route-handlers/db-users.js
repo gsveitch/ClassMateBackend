@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const db = require('../../app/seeders/db.js');
 
 
-// Student Creation
+// Teacher Creation/Find
 const findOrCreateTeacher = (info) => {
   return db.User.findOrCreate({
     where:{
@@ -24,4 +24,29 @@ const findOrCreateTeacher = (info) => {
     });
 };
 
+// Student Creation/Find
+const findOrCreateStudent = (info) => {
+  return db.User.findOrCreate({
+    where: {
+      nameFirst: info.nameFirst,
+      nameLast: info.nameLast,
+    },
+    defaults: {
+      username: info.username,
+      password: info.password,
+      nameFirst: info.nameFirst,
+      nameLast: info.nameLast,
+      gradeLevel: info.gradeLevel,
+      id_emergencyContact: null,
+    },
+  })
+    .spread(({ dataValues }) => {
+      return dataValues;
+    })
+    .catch(err => {
+      console.error(err);
+    });
+};
+
 module.exports.findOrCreateTeacher = findOrCreateTeacher;
+module.exports.findOrCreateStudent = findOrCreateStudent;
