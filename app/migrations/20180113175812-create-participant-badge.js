@@ -15,7 +15,6 @@ module.exports = {
         type: Sequelize.DATE
       },
       id_badge: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Badges',
@@ -23,7 +22,6 @@ module.exports = {
         },
       },
       id_participant: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Participants',

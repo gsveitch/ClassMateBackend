@@ -15,7 +15,6 @@ module.exports = {
         type: Sequelize.DATE
       },
       id_session: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Sessions',

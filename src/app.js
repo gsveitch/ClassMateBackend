@@ -16,12 +16,16 @@ const channels = require('./channels');
 const google = require('googleapis');
 const jwt = require('jsonwebtoken');
 const db = require('../app/seeders/db.js');
+const userDB = require('./route-handlers/db-users.js');
+const assignmentDB = require('./route-handlers/db-assignments.js');
+const sessionDB = require('./route-handlers/db-sessions.js');
  
 const OAuth2 = google.auth.OAuth2;
+const app = express(feathers());
+
 
 require('dotenv').load();
 
-const app = express(feathers());
 
 app.configure(configuration());
 
@@ -31,6 +35,7 @@ app.use(compress());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
+
 
 app.use('/', express.static(app.get('public')));
 
@@ -43,6 +48,10 @@ app.configure(channels);
 app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
+
+// ===============================
+// User Route handlers ===========
+// ===============================
 
 app.post('/login', (req,res) => {
   const user = new OAuth2(req.body.idtoken, '', '');
@@ -60,7 +69,9 @@ app.post('/login', (req,res) => {
         'secret', {
           expiresIn: 24 * 60 * 60
         });
-        res.status(201).send(payload);
+        userDB.findOrCreateTeacher(payload).then(teacher => {
+          res.status(201).send(teacher);
+        })
       }
     }
   );
