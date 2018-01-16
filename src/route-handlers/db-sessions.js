@@ -1,15 +1,15 @@
 const Sequelize = require('sequelize');
 const db = require('../../app/seeders/db.js');
 
-const makeJoinCode = () => {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+// const makeJoinCode = () => {
+//   var text = '';
+//   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  for (let i = 0; i < 5; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
+//   for (let i = 0; i < 5; i++)
+//     text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-  return text;
-};
+//   return text;
+// };
 
 // Session Find or Create
 const findOrCreateSession = (info) => {
@@ -21,7 +21,7 @@ const findOrCreateSession = (info) => {
     defaults:{
       description: info.description,
       calendarId: null,
-      joinCode: makeJoinCode(),
+      joinCode: info.joinCode,
     },
   })
     .spread(result => {

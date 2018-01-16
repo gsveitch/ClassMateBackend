@@ -28,6 +28,8 @@ const findOrCreateTeacher = (info) => {
     });
 };
 
+// LOCAL AUTH
+// ============================
 const hashPassword = (password) => {
   let salt = bcrypt.genSaltSync(10);
   let hash = bcrypt.hashSync(password, salt);
@@ -37,6 +39,8 @@ const hashPassword = (password) => {
 const comparePassword = (studentPassword, hash) => {
   return bcrypt.compareSync(studentPassword, hash);
 }
+// =============================
+
 
 // Student Creation/Find
 const findOrCreateStudent = (student) => {
@@ -70,5 +74,23 @@ const findOrCreateStudent = (student) => {
     });
 };
 
+//Find Student
+const findStudent = (student) => {
+  return db.User.find({
+    where:{
+      username: student.username
+    }, 
+  })
+  .then(result => {
+    if (comparePassword(student.password, result.password)) {
+      return result;
+    } else {
+      return 'Failed Login Attempt';
+    }
+  })
+  .catch(err => console.error(err));
+};
+
 module.exports.findOrCreateTeacher = findOrCreateTeacher;
 module.exports.findOrCreateStudent = findOrCreateStudent;
+module.exports.findStudent = findStudent;
