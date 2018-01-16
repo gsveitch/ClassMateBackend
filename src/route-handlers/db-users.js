@@ -1,5 +1,8 @@
 const Sequelize = require('sequelize');
 const db = require('../../app/seeders/db.js');
+const passport = require('passport');
+const bcrypt = require('bcrypt');
+const localStrategy = require('passport-local').Strategy;
 
 
 // Teacher Creation/Find
@@ -25,27 +28,39 @@ const findOrCreateTeacher = (info) => {
 };
 
 // Student Creation/Find
-const findOrCreateStudent = (info) => {
-  return db.User.findOrCreate({
-    where: {
-      nameFirst: info.nameFirst,
-      nameLast: info.nameLast,
-    },
-    defaults: {
-      username: info.username,
-      password: info.password,
-      nameFirst: info.nameFirst,
-      nameLast: info.nameLast,
-      gradeLevel: info.gradeLevel,
-      id_emergencyContact: null,
-    },
-  })
-    .spread(({ dataValues }) => {
-      return dataValues;
-    })
-    .catch(err => {
-      console.error(err);
+const findOrCreateStudent = (student) => {
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(student.password, salt, (err, hash) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log('student is ', student);
+        student.password = hash;
+        console.log('student username: ', student.username);
+        console.log('student hashed password: ', student.password);
+      }
     });
+  });
+  // return db.User.findOrCreate({
+  //   where: {
+  //     nameFirst: student.nameFirst,
+  //     nameLast: student.nameLast,
+  //   },
+  //   defaults: {
+  //     username: student.username,
+  //     password: student.password,
+  //     nameFirst: student.nameFirst,
+  //     nameLast: student.nameLast,
+  //     gradeLevel: student.gradeLevel,
+  //     id_emergencyContact: null,
+  //   },
+  // })
+  //   .spread(({ dataValues }) => {
+  //     return dataValues;
+  //   })
+  //   .catch(err => {
+  //     console.error(err);
+  //   });
 };
 
 module.exports.findOrCreateTeacher = findOrCreateTeacher;
