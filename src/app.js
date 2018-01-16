@@ -49,11 +49,6 @@ app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
 
-const scopes = ['https://www.googleapis.com/auth/calendar.readonly'];
-// ===============================
-// User Route handlers ===========
-// ===============================
-
 app.post('/login', (req,res) => {
   const client = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   client.verifyIdToken(
@@ -80,37 +75,9 @@ app.post('/login', (req,res) => {
 });
 
 app.post('/studentLogin', (req,res) => {
-  console.log('student username is  ', req.body.userName);
-  console.log('student password is ', req.body.password);
   let student = {username: req.body.userName, password: req.body.password};
   userDB.findOrCreateStudent(student);
   res.status(201).send('student login successful');
 });
-
-      //   function authorize(credentials) {
-      //     var clientSecret = process.env.GOOGLE_CALENDAR_SECRET;
-      //     var clientId = process.env.GOOGLE_CALENDAR_CLIENT_ID;
-      //     var redirectUrl = '';
-      //     var auth = new googleAuth();
-      //     var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-      //     oauth2Client.credentials = JSON.parse(token);
-      //   }
-      // }
-
-    //   let calendar = google.calendar('v3');
-
-    //   calendar.events.list({
-    //     auth: client,
-    //     calendarId: 'sfm05pn42d41k0f14gsdbkgfug@group.calendar.google.com',
-    //   }, (err, response) =>{
-    //     if(err){
-    //       console.error('The API returned error: ',err);
-    //       return;
-    //     }else{
-    //       console.log('response from API is ', response);
-    //     }
-    //   });
-    //   res.status(201).send(userPayload);
-    // });
 
 module.exports = app;

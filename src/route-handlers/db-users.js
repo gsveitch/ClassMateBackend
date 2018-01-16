@@ -1,9 +1,10 @@
+/* eslint-disable */
+
 const Sequelize = require('sequelize');
 const db = require('../../app/seeders/db.js');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const localStrategy = require('passport-local').Strategy;
-
 
 // Teacher Creation/Find
 const findOrCreateTeacher = (info) => {
@@ -27,20 +28,19 @@ const findOrCreateTeacher = (info) => {
     });
 };
 
+const hashPassword = (password) => {
+  let salt = bcrypt.genSaltSync(10);
+  let hash = bcrypt.hashSync(password, salt);
+  return hash;
+};
+
+const comparePassword = (studentPassword, hash) => {
+  return bcrypt.compareSync(studentPassword, hash);
+}
+
 // Student Creation/Find
 const findOrCreateStudent = (student) => {
-  // bcrypt.genSalt(10, (err, salt) => {
-  //   bcrypt.hash(student.password, salt, (err, hash) => {
-  //     if (err) {
-  //       console.error(err);
-  //     } else {
-  //       console.log('student is ', student);
-  //       student.password = hash;
-  //       console.log('student username: ', student.username);
-  //       console.log('student hashed password: ', student.password);
-  //     }
-  //   });
-  // });
+  sudent.password = hashPassword(student.password);
   return db.User.findOrCreate({
     where: {
       username: student.username,
