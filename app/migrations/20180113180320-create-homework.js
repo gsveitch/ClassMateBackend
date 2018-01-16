@@ -8,6 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      photoUrl: {
+        type: Sequelize.STRING
+      },
       id_assignment: {
         type: Sequelize.INTEGER,
         references: {
