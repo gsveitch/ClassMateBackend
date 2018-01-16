@@ -19,6 +19,7 @@ const db = require('../app/seeders/db.js');
 const userDB = require('./route-handlers/db-users.js');
 const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
+const participantDB = require('./route-handlers/db-participants.js');
 const cronofy = require('cronofy');
  
 const OAuth2 = google.auth.OAuth2;
@@ -47,6 +48,9 @@ app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
 
+// ===============================
+// User login/creations ==========
+// ===============================
 app.post('/login', (req,res) => {
   const user = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   let teacher;
@@ -116,9 +120,48 @@ app.post('/login', (req,res) => {
 });
 
 app.post('/studentLogin', (req,res) => {
-  let student = {username: req.body.userName, password: req.body.password};
-  userDB.findOrCreateStudent(student);
-  res.status(201).send('student login successful');
+  const student = {username: req.body.userName, password: req.body.password};
+  userDB.findStudent(student)
+    .then(student => res.status(201).send(student))
+    .catch(err => console.error(err));
 });
+
+app.post('/studentCreate', (req, res) => {
+  const student = { username: req.body.userName, password: req.body.password };
+  userDB.findOrCreateStudent(student)
+    .then(student => res.status(201).send(student))
+    .catch(err => console.error(err));
+});
+
+// ===============================
+
+// ===============================
+// Session Routes ================
+// ===============================
+app.get('/addClass', (req, res) => {
+  const session = {
+    description: 'Maths',
+    joinCode: 'abc123',
+  };
+  sessionDB.findOrCreateSession(session)
+    .then(result => res.status(201).send(result))
+    .catch(err => console.error(err));
+});
+// ===============================
+
+
+// ===============================
+// Participant Routes ============
+// ===============================
+app.get('/joinClass', (req, res) => {
+  const participant = {
+    userId: 3,
+    joinCode: 'abc123',
+  };
+  participantDB.addParticipant(participant)
+    .then(result => res.status(201).send(result))
+    .catch(err => console.error(err));
+});
+// ===============================
 
 module.exports = app;
