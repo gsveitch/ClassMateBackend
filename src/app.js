@@ -80,8 +80,6 @@ app.post('/login', (req,res) => {
 });
 
 app.post('/studentLogin', (req,res) => {
-  console.log('student username is  ', req.body.userName);
-  console.log('student password is ', req.body.password);
   let student = {username: req.body.userName, password: req.body.password};
   userDB.findOrCreateStudent(student);
   res.status(201).send('student login successful');
