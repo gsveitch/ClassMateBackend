@@ -17,7 +17,6 @@ module.exports = {
         },
       },
       id_session: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Sessions',
@@ -25,7 +24,6 @@ module.exports = {
         }
       },
       id_participant_type: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Participant_Types',
