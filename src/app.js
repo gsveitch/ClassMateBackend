@@ -4,7 +4,6 @@ const compress = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
 const logger = require('winston');
-const axios = require('axios');
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
 const express = require('@feathersjs/express');
@@ -17,12 +16,16 @@ const google = require('googleapis');
 const googleAuth = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const db = require('../app/seeders/db.js');
+const userDB = require('./route-handlers/db-users.js');
+const assignmentDB = require('./route-handlers/db-assignments.js');
+const sessionDB = require('./route-handlers/db-sessions.js');
+ 
+const OAuth2 = google.auth.OAuth2;
+const app = express(feathers());
 
-let OAuth2Client = google.auth.OAuth2;
 
 require('dotenv').load();
 
-const app = express(feathers());
 
 app.configure(configuration());
 
@@ -32,6 +35,7 @@ app.use(compress());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
+
 
 app.use('/', express.static(app.get('public')));
 
@@ -46,9 +50,12 @@ app.use(express.errorHandler({ logger }));
 app.hooks(appHooks);
 
 const scopes = ['https://www.googleapis.com/auth/calendar.readonly'];
+// ===============================
+// User Route handlers ===========
+// ===============================
 
 app.post('/login', (req,res) => {
-  const client = new OAuth2Client(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
+  const client = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   client.verifyIdToken(
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
@@ -63,16 +70,23 @@ app.post('/login', (req,res) => {
         'secret', {
           expiresIn: 24 * 60 * 60
         });
-        res.status(201).send(userPayload);
+        userDB.findOrCreateTeacher(userPayload)
+          .then((teacher) => {
+            res.status(201).send(teacher);
+          });
       }
     }
   );
 });
 
 app.post('/studentLogin', (req,res) => {
-  console.log('student login req body is ', req.body);
-  
+  console.log('student username is  ', req.body.userName);
+  console.log('student password is ', req.body.password);
+  let student = {username: req.body.userName, password: req.body.password};
+  userDB.findOrCreateStudent(student);
+  res.status(201).send('student login successful');
 });
+
       //   function authorize(credentials) {
       //     var clientSecret = process.env.GOOGLE_CALENDAR_SECRET;
       //     var clientId = process.env.GOOGLE_CALENDAR_CLIENT_ID;
