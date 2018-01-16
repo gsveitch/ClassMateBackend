@@ -40,11 +40,10 @@ const comparePassword = (studentPassword, hash) => {
 
 // Student Creation/Find
 const findOrCreateStudent = (student) => {
-  student.password = hashPassword(student.password);
+  sudent.password = hashPassword(student.password);
   return db.User.findOrCreate({
     where: {
       username: student.username,
-      password: student.password,
     },
     defaults: {
       username: student.username,
@@ -52,18 +51,22 @@ const findOrCreateStudent = (student) => {
       nameFirst: student.nameFirst,
       nameLast: student.nameLast,
       gradeLevel: student.gradeLevel,
+      id_emergencyContact: null,
     },
   })
-    .spread((user, created) => {
+    .spread((found, created) => {
+      const format = {
+        newUser: true,
+        info: found.dataValues
+      };
       if (created) {
-        console.log(created);
+        return format;
       } else {
-        console.log(user);
+        return found.dataValues;
       }
-      // return dataValues;
     })
     .catch(err => {
-      console.error(err);
+      console.error(err, 'this is error in catch');
     });
 };
 

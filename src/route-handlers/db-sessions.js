@@ -1,9 +1,19 @@
 const Sequelize = require('sequelize');
 const db = require('../../app/seeders/db.js');
 
+const makeJoinCode = () => {
+  var text = '';
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (let i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+};
+
 // Session Find or Create
 const findOrCreateSession = (info) => {
-  db.Session.findOrCreate({
+  return db.Session.findOrCreate({
     where:{
       id: info.id,
       description: info.description,
@@ -11,11 +21,12 @@ const findOrCreateSession = (info) => {
     defaults:{
       description: info.description,
       calendarId: null,
-      joinCode: info.joinCode,
+      joinCode: makeJoinCode(),
     },
   })
     .spread(result => {
       console.log(result);
+      return result;
     })
     .catch(err => {
       console.error(err)
