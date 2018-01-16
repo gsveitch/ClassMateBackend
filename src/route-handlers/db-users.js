@@ -29,38 +29,45 @@ const findOrCreateTeacher = (info) => {
 
 // Student Creation/Find
 const findOrCreateStudent = (student) => {
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(student.password, salt, (err, hash) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log('student is ', student);
-        student.password = hash;
-        console.log('student username: ', student.username);
-        console.log('student hashed password: ', student.password);
-      }
-    });
-  });
-  // return db.User.findOrCreate({
-  //   where: {
-  //     nameFirst: student.nameFirst,
-  //     nameLast: student.nameLast,
-  //   },
-  //   defaults: {
-  //     username: student.username,
-  //     password: student.password,
-  //     nameFirst: student.nameFirst,
-  //     nameLast: student.nameLast,
-  //     gradeLevel: student.gradeLevel,
-  //     id_emergencyContact: null,
-  //   },
-  // })
-  //   .spread(({ dataValues }) => {
-  //     return dataValues;
-  //   })
-  //   .catch(err => {
-  //     console.error(err);
+  // bcrypt.genSalt(10, (err, salt) => {
+  //   bcrypt.hash(student.password, salt, (err, hash) => {
+  //     if (err) {
+  //       console.error(err);
+  //     } else {
+  //       console.log('student is ', student);
+  //       student.password = hash;
+  //       console.log('student username: ', student.username);
+  //       console.log('student hashed password: ', student.password);
+  //     }
   //   });
+  // });
+  return db.User.findOrCreate({
+    where: {
+      username: student.username,
+    },
+    defaults: {
+      username: student.username,
+      password: student.password,
+      nameFirst: student.nameFirst,
+      nameLast: student.nameLast,
+      gradeLevel: student.gradeLevel,
+      id_emergencyContact: null,
+    },
+  })
+    .spread((found, created) => {
+      const format = {
+        newUser: true,
+        info: found.dataValues
+      };
+      if (created) {
+        return format;
+      } else {
+        return found.dataValues;
+      }
+    })
+    .catch(err => {
+      console.error(err, 'this is error in catch');
+    });
 };
 
 module.exports.findOrCreateTeacher = findOrCreateTeacher;

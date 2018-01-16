@@ -1,6 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Homework = sequelize.define('Homework', {}, {
+    photoUrl: DataTypes.STRING,
   });
   
   Homework.associate = (models) => {
