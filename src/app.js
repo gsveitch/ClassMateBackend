@@ -20,6 +20,7 @@ const userDB = require('./route-handlers/db-users.js');
 const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
+const homeworkDB = require('./route-handlers/db-homework.js');
 const cronofy = require('cronofy');
  
 const OAuth2 = google.auth.OAuth2;
@@ -133,6 +134,13 @@ app.post('/studentCreate', (req, res) => {
     .catch(err => console.error(err));
 });
 
+app.get('/studentInformation', (req, res) => {
+  const studentId = 2;
+  userDB.findStudentInfo(studentId)
+    .then(result => res.status(201).send(result))
+    .catch(err => console.error(err));
+});
+
 // ===============================
 
 // ===============================
@@ -149,6 +157,33 @@ app.get('/addClass', (req, res) => {
 });
 // ===============================
 
+// ===============================
+// Homework Route ================
+// ===============================
+app.get('/upload', (req, res) => {
+  res.send(200);
+});
+// ===============================
+
+// ===============================
+// Assignment Routes =============
+// ===============================
+app.get('/createAssignment', (req, res) => {
+  const info = {
+    sessionId: 2,
+    title: 'Math Project 1',
+    dueDate: '02/14/2018'
+  };
+  assignmentDB.findOrCreateAssignment(info)
+    .then(result => res.status(201).send(result))
+    .catch(err => console.error(err));
+});
+
+app.get('/getAssignment', (req, res) => {
+
+})
+
+// ===============================
 
 // ===============================
 // Participant Routes ============
@@ -162,6 +197,13 @@ app.get('/joinClass', (req, res) => {
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
 });
+
+app.get('/classRoster', (req, res) => {
+  const sessionId = 2;
+  participantDB.searchParticipants(sessionId)
+    .then(roster => res.status(201).send(roster))
+    .catch(err => console.error(err)); 
+})
 // ===============================
 
 module.exports = app;
