@@ -39,16 +39,37 @@ const addParticipant = (info) => {
             sessionId: classId,
             className: className,
           };
-          console.log(format)
+          console.log(format);
           return format;
         })
         .catch(err => {
-          console.error(err, 'inner create participant error')
-        })
+          console.error(err, 'inner create participant error');
+        });
     })
     .catch(err => {
       console.error(err, 'outer create participant error');
     });
 };
 
+const searchParticipants = (sessionId) => {
+  return db.Participant.findAll({
+    where:{
+      id_session: sessionId
+    },
+  })
+    .then(roster => {
+      const userIds = [];
+      roster.forEach(el => userIds.push(el.dataValues.id_user));
+      return db.User.findAll({
+        where:{
+          id: userIds
+        },
+      })
+        .then(user => user)
+        .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+};
+
 module.exports.addParticipant = addParticipant;
+module.exports.searchParticipants = searchParticipants;

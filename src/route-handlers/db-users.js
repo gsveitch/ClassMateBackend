@@ -91,6 +91,33 @@ const findStudent = (student) => {
   .catch(err => console.error(err));
 };
 
+const findStudentInfo = (id) => {
+  return db.User.find({
+    where: {
+      id: id
+    },
+  })
+    .then(result => {
+      console.log(result, 'this is result of finding user info')
+      const student = result.dataValues
+      return db.EmergencyContact.find({
+        where: {
+          id: student.id_emergencyContact
+        },
+      })
+      .then(emergencyContact => {
+        const format = {
+          student,
+          emergencyContact
+        }
+        return format;
+      })
+      .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+};
+
 module.exports.findOrCreateTeacher = findOrCreateTeacher;
 module.exports.findOrCreateStudent = findOrCreateStudent;
 module.exports.findStudent = findStudent;
+module.exports.findStudentInfo = findStudentInfo;
