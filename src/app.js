@@ -179,9 +179,9 @@ app.get('/createAssignment', (req, res) => {
     .catch(err => console.error(err));
 });
 
-app.get('/getAssignment', (req, res) => {
+// app.get('/getAssignment', (req, res) => {
 
-})
+// })
 
 // ===============================
 
@@ -190,7 +190,7 @@ app.get('/getAssignment', (req, res) => {
 // ===============================
 app.get('/joinClass', (req, res) => {
   const participant = {
-    userId: 3,
+    userId: 2,
     joinCode: 'abc123',
   };
   participantDB.addParticipant(participant)
@@ -203,7 +203,18 @@ app.get('/classRoster', (req, res) => {
   participantDB.searchParticipants(sessionId)
     .then(roster => res.status(201).send(roster))
     .catch(err => console.error(err)); 
-})
+});
+// ===============================
+
+// ===============================
+// Dashboard Route ===============
+// ===============================
+app.get('/dashboard', (req, res) => {
+  const userId = 2;
+  sessionDB.getSessions(userId)
+    .then(result => res.status(201).send(result))
+    .catch(err => console.error(err));
+});
 // ===============================
 
 module.exports = app;
