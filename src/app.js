@@ -90,9 +90,9 @@ app.post('/login', (req,res) => {
         }
       }
     );
-    if(formattedCalendar !== undefined){
-      res.status(201).send({teacher: teacher, calendar: formattedCalendar});
-    }
+    // if(formattedCalendar !== undefined){
+    //   res.status(201).send({teacher: teacher, calendar: formattedCalendar});
+    // }
 });
 
 app.post('/studentLogin', (req,res) => {
