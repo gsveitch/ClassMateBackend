@@ -112,3 +112,5 @@ lib/
 data/
 
 .env
+
+calendarAPIJSON
