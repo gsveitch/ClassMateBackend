@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Assignment = sequelize.define('Assignment', {
     title: DataTypes.STRING,
-    dueDate: DataTypes.DATE
+    dueDate: DataTypes.STRING
   });
   Assignment.associate = (models) => {
     Assignment.belongsTo(models.Session, {

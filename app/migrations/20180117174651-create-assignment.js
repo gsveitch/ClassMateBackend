@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       dueDate: {
-        type: Sequelize.DATE
+        type: Sequelize.STRING
       },
       id_session: {
         type: Sequelize.INTEGER,

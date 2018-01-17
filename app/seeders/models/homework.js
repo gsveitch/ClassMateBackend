@@ -1,9 +1,8 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Homework = sequelize.define('Homework', {}, {
-    photoUrl: DataTypes.STRING,
+  var Homework = sequelize.define('Homework', {
+    photoUrl: DataTypes.STRING
   });
-  
   Homework.associate = (models) => {
     Homework.belongsTo(models.Assignment, {
       foreignKey: 'id_assignment',
@@ -12,6 +11,5 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id_participant',
     });
   };
-
   return Homework;
 };
