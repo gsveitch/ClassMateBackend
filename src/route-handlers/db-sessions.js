@@ -33,6 +33,35 @@ const findOrCreateSession = (info) => {
     });
 };
 
+//Get Sessions related to User
+const getSessions = (userId) => {
+  return db.Participant.findAll({
+    where:{
+      id_user: userId
+    },
+  })
+    .then(sessions => {
+      const sessionIds = [];
+      sessions.forEach(el => sessionIds.push(el.dataValues.id_session));
+      return db.Session.findAll({
+        where:{
+          id: sessionIds,
+        },
+      })
+        .then(names => {
+          const sessionNames = [];
+          names.forEach(el => sessionNames.push(el.dataValues.description));
+          const format = {
+            sessionIds,
+            sessionNames,
+          };
+          return format;
+        })
+        .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+};
+
 // Session Update
 const updateSession = (info) => {
   db.Session.update(
@@ -51,3 +80,4 @@ const updateSession = (info) => {
 
 module.exports.findOrCreateSession = findOrCreateSession;
 module.exports.updateSession = updateSession;
+module.exports.getSessions = getSessions;
