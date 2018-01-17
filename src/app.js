@@ -20,7 +20,9 @@ const userDB = require('./route-handlers/db-users.js');
 const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
+const homeworkDB = require('./route-handlers/db-homework.js');
 const cronofy = require('cronofy');
+const calApi = require('./services/calendar.js'); 
  
 const OAuth2 = google.auth.OAuth2;
 const app = express(feathers());
@@ -54,7 +56,7 @@ app.hooks(appHooks);
 app.post('/login', (req,res) => {
   const user = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   let teacher;
-  let requestedCalendar = [];
+  let formattedCalendar;
   user.verifyIdToken(
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
@@ -71,36 +73,12 @@ app.post('/login', (req,res) => {
         });
       
         let client = new cronofy({
-          access_token: 't5cezkIyHkr2pU-w1c9Q6fneYdhyqu_e',
+          access_token: process.env.CRONOFY_ACCESS_TOKEN,
         });
-        var options = {
-          tzid: 'Etc/UTC'
-        };
-
-        client.listCalendars(options)
-          .then(function (response) {
-            console.log('calendars available for list');
-            // var calendars = response.calendars;
-          })
-          .catch(err => {
-            console.log(err);
-          });
-    
-        client.readEvents(options)
-          .then(function (response) {
-            console.log('calendar events available');
-            let teacherCalendar = response.events;
-            for(let i=0; i<teacherCalendar.length; i++){
-              if(teacherCalendar[i].organizer.display_name === '5th Grade'){
-                requestedCalendar.push(teacherCalendar[i]);
-              }
-            }
-            sendTeacher(teacher, requestedCalendar);
-            // console.log('teacher calendar is ', teacherCalendar);
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        
+        //call calendar API for calendar events
+        const calendarName = 'English Class';
+        formattedCalendar = calApi.getCalendar(client, calendarName);
 
         userDB.findOrCreateTeacher(userPayload)
           .then((response) => {
@@ -109,14 +87,12 @@ app.post('/login', (req,res) => {
           .catch(err => {
             console.log(err);
           });
+        }
       }
-    }
-  );
-  const sendTeacher = (teach, calendar) => {
-    console.log('teacher is ', teach);
-    console.log('teacher calendar is ', calendar);
-    res.status(201).send({teacherData: teach, calendarData: calendar});
-  }
+    );
+    // if(formattedCalendar !== undefined){
+    //   res.status(201).send({teacher: teacher, calendar: formattedCalendar});
+    // }
 });
 
 app.post('/studentLogin', (req,res) => {
@@ -130,6 +106,13 @@ app.post('/studentCreate', (req, res) => {
   const student = { username: req.body.userName, password: req.body.password };
   userDB.findOrCreateStudent(student)
     .then(student => res.status(201).send(student))
+    .catch(err => console.error(err));
+});
+
+app.get('/studentInformation', (req, res) => {
+  const studentId = 2;
+  userDB.findStudentInfo(studentId)
+    .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
 });
 
@@ -149,6 +132,33 @@ app.get('/addClass', (req, res) => {
 });
 // ===============================
 
+// ===============================
+// Homework Route ================
+// ===============================
+app.get('/upload', (req, res) => {
+  res.send(200);
+});
+// ===============================
+
+// ===============================
+// Assignment Routes =============
+// ===============================
+app.get('/createAssignment', (req, res) => {
+  const info = {
+    sessionId: 2,
+    title: 'Math Project 1',
+    dueDate: '02/14/2018'
+  };
+  assignmentDB.findOrCreateAssignment(info)
+    .then(result => res.status(201).send(result))
+    .catch(err => console.error(err));
+});
+
+app.get('/getAssignment', (req, res) => {
+
+})
+
+// ===============================
 
 // ===============================
 // Participant Routes ============
@@ -162,6 +172,13 @@ app.get('/joinClass', (req, res) => {
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
 });
+
+app.get('/classRoster', (req, res) => {
+  const sessionId = 2;
+  participantDB.searchParticipants(sessionId)
+    .then(roster => res.status(201).send(roster))
+    .catch(err => console.error(err)); 
+})
 // ===============================
 
 module.exports = app;
