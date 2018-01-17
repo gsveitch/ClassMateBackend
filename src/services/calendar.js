@@ -11,7 +11,7 @@ const getCalendar = (client, calendarName) => {
         tzid: 'Etc/UTC'
     };
 
-    client.readEvents(options)
+    return client.readEvents(options)
     .then(function (events) {
         for(let i=0; i<events.events.length; i++){
             if(events.events[i].summary === calendarName){
