@@ -78,22 +78,25 @@ app.post('/login', (req,res) => {
         
         //call calendar API for calendar events
         const calendarName = 'English Class';
-        formattedCalendar = calApi.getCalendar(client, calendarName);
-
-        userDB.findOrCreateTeacher(userPayload)
-          .then((response) => {
-            teacher = response;
+        calApi.getCalendar(client, calendarName)
+          .then(calendar => {
+            formattedCalendar = calendar;
+            userDB.findOrCreateTeacher(userPayload)
+              .then((response) => {
+                teacher = response;
+                res.status(201).send({teacher: teacher, calendar: formattedCalendar});
+              })
+              .catch(err => {
+                console.log(err);
+              });
           })
-          .catch(err => {
+          .catch(err =>{
             console.log(err);
           });
         }
       }
     );
-    // if(formattedCalendar !== undefined){
-    //   res.status(201).send({teacher: teacher, calendar: formattedCalendar});
-    // }
-});
+  });
 
 app.post('/studentLogin', (req,res) => {
   const student = {username: req.body.userName, password: req.body.password};
