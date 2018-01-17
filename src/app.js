@@ -54,6 +54,8 @@ app.hooks(appHooks);
 // ===============================
 app.post('/login', (req,res) => {
   const user = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
+  let teacher;
+  let formattedCalendar;
   user.verifyIdToken(
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
@@ -74,8 +76,8 @@ app.post('/login', (req,res) => {
         });
         
         //call calendar API for calendar events
-        const calendarName = '5th Grade';
-        calApi.getCalendar(client, calendarName);
+        const calendarName = 'English Class';
+        formattedCalendar = calApi.getCalendar(client, calendarName);
 
         userDB.findOrCreateTeacher(userPayload)
           .then((response) => {
@@ -84,9 +86,12 @@ app.post('/login', (req,res) => {
           .catch(err => {
             console.log(err);
           });
+        }
       }
+    );
+    if(formattedCalendar !== undefined){
+      res.status(201).send({teacher: teacher, calendar: formattedCalendar});
     }
-  );
 });
 
 app.post('/studentLogin', (req,res) => {
