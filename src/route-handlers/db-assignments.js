@@ -4,15 +4,15 @@ const db = require('../../app/seeders/db.js');
 // Assignment find/create
 // MUST RECEIVE SESSION ID FOR ASSIGNMENT CREATION
 const findOrCreateAssignment = (info) => {
-  console.log(info, 'info from findOrCreate Assignment')
+  console.log(info.sessionId, 'sessionId from findOrCreate Assignment')
   return db.Assignment.findOrCreate({
     where: {
       title: info.title
     },
     defaults: {
+      id_session: info.sessionId,
       title: info.title,
       dueDate: info.dueDate,
-      SessionId: info.sessionId,
     },
   })
     .then(results => {
@@ -23,9 +23,24 @@ const findOrCreateAssignment = (info) => {
     });
 };
 
+// Assignment findAll for DueDates
+const findAssignment = (id) => {
+  return db.Assignment.findAll({
+    where:{
+      id_session: id
+    },
+  })
+    .then(results => {
+      const dueDates = [];
+      results.forEach(el => dueDates.push([el.title, el.dueDate]));
+      return dueDates;
+    })
+    .catch(err => console.error(err));
+};
+
 // Assignment deletion
 const deleteAssignment = (info) => {
-  db.Assignment.destroy({
+  return db.Assignment.destroy({
     where:{
       title: info.title,
     }
@@ -41,3 +56,4 @@ const deleteAssignment = (info) => {
 
 module.exports.findOrCreateAssignment = findOrCreateAssignment;
 module.exports.deleteAssignment = deleteAssignment;
+module.exports.findAssignment = findAssignment;
