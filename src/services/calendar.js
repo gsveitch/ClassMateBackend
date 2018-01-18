@@ -8,7 +8,7 @@ const returnEvents = [];
 const getCalendar = (client, calendarName) => {
     
     var options = {
-        tzid: 'Etc/UTC'
+        tzid: 'America/Chicago'
     };
 
     return client.readEvents(options)

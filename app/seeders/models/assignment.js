@@ -1,13 +1,9 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Assignment = sequelize.define('Assignment', {
+  var Assignment = sequelize.define('Assignment', {
     title: DataTypes.STRING,
-    dueDate: DataTypes.STRING
+    dueDate: DataTypes.STRING,
+    id_session: DataTypes.INTEGER,
   });
-  Assignment.associate = (models) => {
-    Assignment.belongsTo(models.Session, {
-      foreignkey: 'id_session',
-    });
-  };
   return Assignment;
 };

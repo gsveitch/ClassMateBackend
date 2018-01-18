@@ -25,6 +25,7 @@ const addParticipant = (info) => {
       return db.Participant.findOrCreate({
         where:{
           id_user: user,
+          id_session: classId
         },
         defaults:{
           id_user: user,

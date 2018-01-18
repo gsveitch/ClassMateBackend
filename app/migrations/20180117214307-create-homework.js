@@ -1,23 +1,20 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Assignments', {
+    return queryInterface.createTable('Homework', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
+      photoUrl: {
         type: Sequelize.STRING
       },
-      dueDate: {
-        type: Sequelize.STRING
-      },
-      id_session: {
+      id_Assignment: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Sessions',
+        references:{
+          model: 'Assignments',
           key: 'id',
         },
       },
@@ -32,6 +29,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Assignments');
+    return queryInterface.dropTable('Homework');
   }
 };

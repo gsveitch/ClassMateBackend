@@ -79,24 +79,23 @@ app.post('/login', (req,res) => {
         //call calendar API for calendar events
         const calendarName = 'English Class';
         calApi.getCalendar(client, calendarName)
-          .then(calendar => {
-            formattedCalendar = calendar;
-            userDB.findOrCreateTeacher(userPayload)
-              .then((response) => {
-                teacher = response;
-                res.status(201).send({teacher: teacher, calendar: formattedCalendar});
-              })
-              .catch(err => {
-                console.log(err);
-              });
+          .then(formattedCalender => console.log(formattedCalender))
+          .catch()
+
+        userDB.findOrCreateTeacher(userPayload)
+          .then((response) => {
+            teacher = response;
           })
-          .catch(err =>{
+          .catch(err => {
             console.log(err);
           });
-        }
       }
-    );
-  });
+    }
+  );
+  // if(formattedCalendar !== undefined){
+  //   res.status(201).send({teacher: teacher, calendar: formattedCalendar});
+  // }
+});
 
 app.post('/studentLogin', (req,res) => {
   const student = {username: req.body.userName, password: req.body.password};
@@ -126,8 +125,8 @@ app.get('/studentInformation', (req, res) => {
 // ===============================
 app.get('/addClass', (req, res) => {
   const session = {
-    description: 'Maths',
-    joinCode: 'abc123',
+    description: 'English',
+    joinCode: 'words123',
   };
   sessionDB.findOrCreateSession(session)
     .then(result => res.status(201).send(result))
@@ -148,8 +147,8 @@ app.get('/upload', (req, res) => {
 // ===============================
 app.get('/createAssignment', (req, res) => {
   const info = {
-    seshId: 2,
-    title: 'Math Project 1',
+    sessionId: 2,
+    title: 'Algebra Project 1',
     dueDate: '02/14/2018'
   };
   assignmentDB.findOrCreateAssignment(info)
@@ -158,8 +157,11 @@ app.get('/createAssignment', (req, res) => {
 });
 
 app.get('/getAssignment', (req, res) => {
-
-})
+  const sessionId = 2;
+  assignmentDB.findAssignment(sessionId)
+    .then(result => res.status(201).send(result))
+    .catch(err => console.error(err));
+});
 
 // ===============================
 
@@ -168,8 +170,8 @@ app.get('/getAssignment', (req, res) => {
 // ===============================
 app.get('/joinClass', (req, res) => {
   const participant = {
-    userId: 3,
-    joinCode: 'abc123',
+    userId: 2,
+    joinCode: 'bio237',
   };
   participantDB.addParticipant(participant)
     .then(result => res.status(201).send(result))
@@ -181,7 +183,19 @@ app.get('/classRoster', (req, res) => {
   participantDB.searchParticipants(sessionId)
     .then(roster => res.status(201).send(roster))
     .catch(err => console.error(err)); 
-})
+});
+// ===============================
+
+// ===============================
+// Dashboard Route ===============
+// ===============================
+app.get('/dashboard', (req, res) => {
+  const userId = 2;
+  sessionDB.getSessions(userId)
+    .then(result => res.status(201).send(result =>{
+    }))
+    .catch(err => console.error(err));
+});
 // ===============================
 
 module.exports = app;

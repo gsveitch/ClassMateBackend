@@ -15,7 +15,10 @@ const ClassSchedule = '/classSchedule'; // googleCalendar API
 
 // Student Dashboard to be populated when logged in
 const ClassRoster = '/classRoster'; // send session_id => get back all the participants
+// DONE
 
 const GetAssignments = '/getAssignment'; // send session_id => get back all the assignments
+// DONE
 
 const StudentInformation = '/studentInformation'; // send student_id and get back specific student info 
+// DONE
