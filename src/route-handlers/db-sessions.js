@@ -49,13 +49,9 @@ const getSessions = (userId) => {
         },
       })
         .then(names => {
-          const sessionNames = [];
-          names.forEach(el => sessionNames.push(el.dataValues.description));
-          const format = {
-            sessionIds,
-            sessionNames,
-          };
-          return format;
+          const sessions = [];
+          names.forEach(el => sessions.push(el.dataValues));
+          return sessions;
         })
         .catch(err => console.error(err));
     })
