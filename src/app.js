@@ -23,7 +23,7 @@ const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
 const cronofy = require('cronofy');
 const calApi = require('./services/calendar.js'); 
- 
+
 const OAuth2 = google.auth.OAuth2;
 const app = express(feathers());
 
@@ -71,20 +71,9 @@ app.post('/login', (req,res) => {
         'secret', {
           expiresIn: 24 * 60 * 60
         });
-      
-        const client = new cronofy({
-          access_token: process.env.CRONOFY_ACCESS_TOKEN,
-        });
-        
-        //call calendar API for calendar events
-        const calendarName = 'English Class';
-        calApi.getCalendar(client, calendarName)
-          .then(formattedCalender => console.log(formattedCalender))
-          .catch()
-
         userDB.findOrCreateTeacher(userPayload)
-          .then((response)
-            .catch(err => console.log(err)));
+          .then((response) => res.status(201).send(response))
+          .catch(err => console.error(err));
       }
     }
   );
@@ -191,7 +180,7 @@ app.get('/dashboard', (req, res) => {
       });
       //call calendar API for calendar events
       const calendarName = 'English Class';
-      calApi.getCalendar(client, calendarName)
+      calApi.getCalendar(calendarName)
         .then((formattedCalender) => {
           const reformat = {
             sessions,
@@ -199,7 +188,7 @@ app.get('/dashboard', (req, res) => {
           };
           res.status(201).send(reformat);
         })
-        .catch(err => console.error(err))
+        .catch(err => console.error(err));
     })
     .catch(err => console.error(err));
 });
