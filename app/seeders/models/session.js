@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
     calenderID: DataTypes.STRING,
     joinCode: DataTypes.STRING
   });
-  
+  // Session.associate = (models) => {
+  //   Session.belongsTo(models.Participant, {
+  //     foreignKey: 'id_session',
+  //   });
+  // };
   return Session;
 };
