@@ -72,7 +72,7 @@ app.post('/login', (req,res) => {
           expiresIn: 24 * 60 * 60
         });
       
-        let client = new cronofy({
+        const client = new cronofy({
           access_token: process.env.CRONOFY_ACCESS_TOKEN,
         });
         
@@ -192,8 +192,22 @@ app.get('/classRoster', (req, res) => {
 app.get('/dashboard', (req, res) => {
   const userId = 2;
   sessionDB.getSessions(userId)
-    .then(result => res.status(201).send(result =>{
-    }))
+    .then((sessions) => {
+      const client = new cronofy({
+        access_token: process.env.CRONOFY_ACCESS_TOKEN,
+      });
+      //call calendar API for calendar events
+      const calendarName = 'English Class';
+      calApi.getCalendar(client, calendarName)
+        .then((formattedCalender) => {
+          const reformat = {
+            sessions,
+            formattedCalender
+          };
+          res.status(201).send(reformat);
+        })
+        .catch(err => console.error(err))
+    })
     .catch(err => console.error(err));
 });
 // ===============================
