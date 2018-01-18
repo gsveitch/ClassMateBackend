@@ -148,7 +148,7 @@ app.get('/upload', (req, res) => {
 // ===============================
 app.get('/createAssignment', (req, res) => {
   const info = {
-    sessionId: 2,
+    seshId: 2,
     title: 'Math Project 1',
     dueDate: '02/14/2018'
   };

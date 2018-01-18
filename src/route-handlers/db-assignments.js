@@ -12,7 +12,7 @@ const findOrCreateAssignment = (info) => {
     defaults: {
       title: info.title,
       dueDate: info.dueDate,
-      SessionId: info.sessionId,
+      id_session: info.seshId,
     },
   })
     .then(results => {

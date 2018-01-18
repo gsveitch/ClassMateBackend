@@ -28,8 +28,8 @@ const getCalendar = (client, calendarName) => {
             }
             event.summary = calEvents[i].summary;
             event.description = calEvents[i].description;
-            event.start = calEvents[i].start;
-            event.end = calEvents[i].end;
+            event.startTime = calEvents[i].start;
+            event.endTime = calEvents[i].end;
             event.location = calEvents[i].location.description;
             returnEvents.push(event);
         }
