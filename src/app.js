@@ -72,12 +72,8 @@ app.post('/login', (req,res) => {
           expiresIn: 24 * 60 * 60
         });
         userDB.findOrCreateTeacher(userPayload)
-          .then((response) => {
-            res.status(201).send(response);
-          })
-          .catch(err => {
-            console.error(err);
-          });
+          .then((response) => res.status(201).send(response))
+          .catch(err => console.error(err));
       }
     }
   );
