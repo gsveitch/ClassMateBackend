@@ -73,7 +73,7 @@ app.post('/login', (req,res) => {
         });
         userDB.findOrCreateTeacher(userPayload)
           .then((response) => {
-            teacher = response;
+            res.status(201).send(response);
           })
           .catch(err => {
             console.error(err);
