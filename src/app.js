@@ -140,11 +140,14 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
   // Uploads to cloudinary
   cloudinary.v2.uploader.upload(`data:${type};base64,${newPhoto}`, (err, photo) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       res.status(400).send(err);
     } else {
+      const photoUrl = photo.url;
       console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
-      //Photo.save(photo.url) to database
+      homeworkDB.uploadHomework(userId, photoUrl)
+        .then(result => result)
+        .catch(err => console.error(err));
     }
   });
 });
@@ -199,6 +202,7 @@ app.get('/classRoster', (req, res) => {
 // ===============================
 app.get('/dashboard', (req, res) => {
   const userId = req.query.userId;
+  const tempUser = 2
   console.log('req.query');
   console.log(req.query);
   sessionDB.getSessions(userId)

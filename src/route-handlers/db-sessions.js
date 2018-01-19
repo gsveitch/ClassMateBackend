@@ -30,7 +30,7 @@ const findOrCreateSession = (info) => {
       return result;
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
     });
 };
 
@@ -43,7 +43,11 @@ const getSessions = (userId) => {
   })
     .then(sessions => {
       const sessionIds = [];
+      const participantIds = [];
       sessions.forEach(el => sessionIds.push(el.dataValues.id_session));
+      sessions.forEach(el => participantIds.push(el.dataValues));
+      console.log(sessionIds);
+      console.log(participantIds);
       return db.Session.findAll({
         where:{
           id: sessionIds,
@@ -51,29 +55,22 @@ const getSessions = (userId) => {
       })
         .then(names => {
           const sessions = [];
-          names.forEach(el => sessions.push(el.dataValues));
+          names.forEach(el => {
+            participantIds.forEach(id => {
+              if (el.dataValues.id === id.id_session) {
+                sessions.push({sessionID: el.dataValues.id, sessionName: el.dataValues.description, participantID: id.id});
+              }
+            });
+          });
+          console.log(sessions);
           return assignment.findAssignment(sessionIds)
             .then(assignments => {
               const format = {
                 assignments,
-                sessions
+                sessions,
               };
               return format;
             })
-          // return db.Assignment.findAll({
-          //   where:{
-          //     id_session: sessionIds
-          //   },
-          // })
-          //   .then(assignments => {
-          //     const assignedWork = [];
-          //     assignments.forEach(el => assignedWork.push(el.dataValues));
-          //     const format = {
-          //       sessions,
-          //       assignedWork
-          //     };
-          //     return format;
-            // })
             .catch(err => console.error(err));
         })
         .catch(err => console.error(err));
@@ -90,7 +87,7 @@ const updateSession = (info) => {
     { description: info.description }
   )
     .then(result => {
-      console.log(result)
+      console.log(result);
     })
     .catch(err => {
       console.error(err);
