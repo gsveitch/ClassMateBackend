@@ -1,11 +1,16 @@
 /* eslint-disable */
 
 const cronofy = require('cronofy');
+require('dotenv').load();
 
 const calEvents = [];
 const returnEvents = [];
 
-const getCalendar = (client, calendarName) => {
+const client = new cronofy({
+    access_token: process.env.CRONOFY_ACCESS_TOKEN,
+});
+
+const getCalendar = (calendarName) => {
     
     var options = {
         tzid: 'America/Chicago'
@@ -44,7 +49,10 @@ const getCalendar = (client, calendarName) => {
 
 const convertTime = (timeString) =>{
     const timeSplit = timeString.split('T');
-    const date = timeSplit[0];
+    let date = timeSplit[0];
+    let year = date.slice(0,5);
+    year = year.slice(0,4);
+    date = `${date.slice(5)}-${year}`;
     let time = timeSplit[1];
     time = time.slice(0,8);
     let hours = time.slice(0,2);

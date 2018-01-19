@@ -44,7 +44,7 @@ const comparePassword = (studentPassword, hash) => {
 
 // Student Creation/Find
 const findOrCreateStudent = (student) => {
-  sudent.password = hashPassword(student.password);
+  student.password = hashPassword(student.password);
   return db.User.findOrCreate({
     where: {
       username: student.username,
@@ -75,21 +75,21 @@ const findOrCreateStudent = (student) => {
 };
 
 //Find Student
-const findStudent = (student) => {
-  return db.User.find({
-    where:{
-      username: student.username
-    }, 
-  })
-  .then(result => {
-    if (comparePassword(student.password, result.password)) {
-      return result;
-    } else {
-      return 'Failed Login Attempt';
-    }
-  })
-  .catch(err => console.error(err));
-};
+// const findStudent = (student) => {
+//   return db.User.find({
+//     where:{
+//       username: student.username
+//     }, 
+//   })
+//   .then(result => {
+//     if (comparePassword(student.password, result.password)) {
+//       return result;
+//     } else {
+//       return 'Failed Login Attempt';
+//     }
+//   })
+//   .catch(err => console.error(err));
+// };
 
 const findStudentInfo = (id) => {
   return db.User.find({
@@ -119,5 +119,5 @@ const findStudentInfo = (id) => {
 
 module.exports.findOrCreateTeacher = findOrCreateTeacher;
 module.exports.findOrCreateStudent = findOrCreateStudent;
-module.exports.findStudent = findStudent;
+// module.exports.findStudent = findStudent;
 module.exports.findStudentInfo = findStudentInfo;

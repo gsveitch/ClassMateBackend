@@ -23,7 +23,7 @@ const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
 const cronofy = require('cronofy');
 const calApi = require('./services/calendar.js'); 
- 
+
 const OAuth2 = google.auth.OAuth2;
 const app = express(feathers());
 
@@ -61,7 +61,7 @@ app.post('/login', (req,res) => {
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
     (err, login) =>{
-      if(err){
+      if (err) {
         console.error(err);
       }else{
         let userPayload = login.getPayload();
@@ -71,41 +71,23 @@ app.post('/login', (req,res) => {
         'secret', {
           expiresIn: 24 * 60 * 60
         });
-      
-        const client = new cronofy({
-          access_token: process.env.CRONOFY_ACCESS_TOKEN,
-        });
-        
-        //call calendar API for calendar events
-        const calendarName = 'English Class';
-        calApi.getCalendar(client, calendarName)
-          .then(formattedCalender => console.log(formattedCalender))
-          .catch()
-
         userDB.findOrCreateTeacher(userPayload)
-          .then((response) => {
-            teacher = response;
-          })
-          .catch(err => {
-            console.log(err);
-          });
+          .then((response) => res.status(201).send(response))
+          .catch(err => console.error(err));
       }
     }
   );
-  // if(formattedCalendar !== undefined){
-  //   res.status(201).send({teacher: teacher, calendar: formattedCalendar});
-  // }
 });
 
-app.post('/studentLogin', (req,res) => {
-  const student = {username: req.body.userName, password: req.body.password};
-  userDB.findStudent(student)
-    .then(student => res.status(201).send(student))
-    .catch(err => console.error(err));
-});
+// app.post('/studentLogin', (req,res) => {
+//   const student = {username: req.body.userName, password: req.body.password};
+//   userDB.findStudent(student)
+//     .then(student => res.status(201).send(student))
+//     .catch(err => console.error(err));
+// });
 
 app.post('/studentCreate', (req, res) => {
-  const student = { username: req.body.userName, password: req.body.password };
+  const student = req.body;
   userDB.findOrCreateStudent(student)
     .then(student => res.status(201).send(student))
     .catch(err => console.error(err));
@@ -123,10 +105,10 @@ app.get('/studentInformation', (req, res) => {
 // ===============================
 // Session Routes ================
 // ===============================
-app.get('/addClass', (req, res) => {
+app.post('/addClass', (req, res) => {
   const session = {
-    description: 'English',
-    joinCode: 'words123',
+    description: req.body.description,
+    joinCode: req.body.joinCode,
   };
   sessionDB.findOrCreateSession(session)
     .then(result => res.status(201).send(result))
@@ -168,11 +150,11 @@ app.get('/getAssignment', (req, res) => {
 // ===============================
 // Participant Routes ============
 // ===============================
-app.get('/joinClass', (req, res) => {
+app.post('/joinClass', (req, res) => {
   const participant = {
-    userId: 2,
-    joinCode: 'bio237',
-  };
+    userId: req.body.userId,
+    joinCode: req.body.joinCode
+  }
   participantDB.addParticipant(participant)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
@@ -198,7 +180,7 @@ app.get('/dashboard', (req, res) => {
       });
       //call calendar API for calendar events
       const calendarName = 'English Class';
-      calApi.getCalendar(client, calendarName)
+      calApi.getCalendar(calendarName)
         .then((formattedCalender) => {
           const reformat = {
             sessions,
@@ -206,7 +188,7 @@ app.get('/dashboard', (req, res) => {
           };
           res.status(201).send(reformat);
         })
-        .catch(err => console.error(err))
+        .catch(err => console.error(err));
     })
     .catch(err => console.error(err));
 });
