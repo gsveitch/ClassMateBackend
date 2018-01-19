@@ -129,8 +129,11 @@ app.post('/addClass', (req, res) => {
 // ===============================
 // Homework Route ================
 // ===============================
-app.post('/upload', (req, res) => {
+app.post('/upload/:userId/:sessionId', (req, res) => {
   console.log('fired');
+  const { userId, sessionId } = req.params;
+  console.log(userId);
+  console.log(sessionId);
   const newPhoto = req.files['photo'].data.toString('base64');
   const type = req.files['photo'].mimetype;
   //const userEmail = req.params[0];
@@ -195,7 +198,9 @@ app.get('/classRoster', (req, res) => {
 // Dashboard Route ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
-  const userId = 2;
+  const userId = req.query.userId;
+  console.log('req.query');
+  console.log(req.query);
   sessionDB.getSessions(userId)
     .then((sessions) => {
       const client = new cronofy({
