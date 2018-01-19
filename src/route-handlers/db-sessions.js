@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../../app/seeders/db.js');
+const assignment = require('./db-assignments.js');
 
 // const makeJoinCode = () => {
 //   var text = '';
@@ -51,7 +52,29 @@ const getSessions = (userId) => {
         .then(names => {
           const sessions = [];
           names.forEach(el => sessions.push(el.dataValues));
-          return sessions;
+          return assignment.findAssignment(sessionIds)
+            .then(assignments => {
+              const format = {
+                assignments,
+                sessions
+              };
+              return format;
+            })
+          // return db.Assignment.findAll({
+          //   where:{
+          //     id_session: sessionIds
+          //   },
+          // })
+          //   .then(assignments => {
+          //     const assignedWork = [];
+          //     assignments.forEach(el => assignedWork.push(el.dataValues));
+          //     const format = {
+          //       sessions,
+          //       assignedWork
+          //     };
+          //     return format;
+            // })
+            .catch(err => console.error(err));
         })
         .catch(err => console.error(err));
     })

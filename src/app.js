@@ -174,7 +174,7 @@ app.get('/classRoster', (req, res) => {
 app.get('/dashboard', (req, res) => {
   const userId = 2;
   sessionDB.getSessions(userId)
-    .then((sessions) => {
+    .then((sessionInfo) => {
       const client = new cronofy({
         access_token: process.env.CRONOFY_ACCESS_TOKEN,
       });
@@ -183,7 +183,7 @@ app.get('/dashboard', (req, res) => {
       calApi.getCalendar(calendarName)
         .then((formattedCalender) => {
           const reformat = {
-            sessions,
+            sessionInfo,
             formattedCalender
           };
           res.status(201).send(reformat);
