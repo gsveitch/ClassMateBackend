@@ -49,7 +49,17 @@ app.configure(channels);
 app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
+/// ***************CLOUDINARY****************
+const cloudinary = require('cloudinary');
+cloudinary.config({
+  cloud_name: 'fido',
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
 
+////******************************************** */
 // ===============================
 // User login/creations ==========
 // ===============================
@@ -119,8 +129,21 @@ app.post('/addClass', (req, res) => {
 // ===============================
 // Homework Route ================
 // ===============================
-app.get('/upload', (req, res) => {
-  res.send(200);
+app.post('/upload', (req, res) => {
+  console.log('fired');
+  const newPhoto = req.files['photo'].data.toString('base64');
+  const type = req.files['photo'].mimetype;
+  //const userEmail = req.params[0];
+  // Uploads to cloudinary
+  cloudinary.v2.uploader.upload(`data:${type};base64,${newPhoto}`, (err, photo) => {
+    if (err) {
+      console.log(err);
+      res.status(400).send(err);
+    } else {
+      console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
+      //Photo.save(photo.url) to database
+    }
+  });
 });
 // ===============================
 
