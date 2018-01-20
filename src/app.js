@@ -140,8 +140,11 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
       console.error(err);
       res.status(400).send(err);
     } else {
+      const photoUrl = photo.url;
       // console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
-      //Photo.save(photo.url) to database
+      homeworkDB.uploadHomework(userId, photoUrl)
+        .then(result => result)
+        .catch(err => console.error(err));
     }
   });
 });
@@ -196,8 +199,11 @@ app.get('/classRoster', (req, res) => {
 // ===============================
 app.get('/dashboard', (req, res) => {
   const userId = req.query.userId;
+  const tempUser = 2
+  // console.log('req.query');
+  // console.log(req.query);
   sessionDB.getSessions(userId)
-    .then((sessions) => {
+    .then((sessionInfo) => {
       const client = new cronofy({
         access_token: process.env.CRONOFY_ACCESS_TOKEN,
       });
@@ -206,7 +212,7 @@ app.get('/dashboard', (req, res) => {
       calApi.getCalendar(calendarName)
         .then((formattedCalender) => {
           const reformat = {
-            sessions,
+            sessionInfo,
             formattedCalender
           };
           res.status(201).send(reformat);
