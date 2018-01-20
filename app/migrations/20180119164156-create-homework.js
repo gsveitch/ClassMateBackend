@@ -11,11 +11,18 @@ module.exports = {
       photoUrl: {
         type: Sequelize.STRING
       },
-      id_Assignment: {
+      id_assignment: {
         type: Sequelize.INTEGER,
-        references:{
+        references: {
           model: 'Assignments',
-          key: 'id',
+          key: 'id'
+        },
+      },
+      id_participant: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Participants',
+          key: 'id'
         },
       },
       createdAt: {
