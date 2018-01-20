@@ -23,6 +23,7 @@ const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
 const cronofy = require('cronofy');
 const calApi = require('./services/calendar.js'); 
+const memory = require('feathers-memory');
 
 const OAuth2 = google.auth.OAuth2;
 const app = express(feathers());
@@ -58,6 +59,20 @@ cloudinary.config({
 });
 const fileUpload = require('express-fileupload');
 app.use(fileUpload());
+
+////**************SOCKET IO */****************************** */
+// const io = require('socket.io')(server);
+
+// io.on('connection', (socket) => {
+//   console.log('User connected');
+//   socket.on('disconnect', () => {
+//     console.log('User disconnected');
+//   });
+//   socket.on('raise-hand', (data) => {
+//     console.log(data);
+//     io.emit('new-message', { message: data });
+//   });
+// });
 
 ////******************************************** */
 // ===============================
