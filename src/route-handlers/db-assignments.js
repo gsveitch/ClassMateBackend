@@ -4,7 +4,6 @@ const db = require('../../app/seeders/db.js');
 // Assignment find/create
 // MUST RECEIVE SESSION ID FOR ASSIGNMENT CREATION
 const findOrCreateAssignment = (info) => {
-  console.log(info.sessionId, 'sessionId from findOrCreate Assignment')
   return db.Assignment.findOrCreate({
     where: {
       title: info.title
@@ -46,7 +45,7 @@ const deleteAssignment = (info) => {
     }
   })
     .then(result => {
-      console.log(result);
+      // console.log(result);
     })
     .catch(err => {
       console.error(err);

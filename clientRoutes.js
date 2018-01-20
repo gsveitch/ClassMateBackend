@@ -1,4 +1,5 @@
 const TeacherLoginRoute = '/login';
+
 const StudentLoginRoute = '/studentLogin';
 
 const DashboardRoute = '/dashboard'; // send user_id and get back the session_id, session_name and due_dates

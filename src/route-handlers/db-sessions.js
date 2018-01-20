@@ -25,7 +25,6 @@ const findOrCreateSession = (info) => {
     },
   })
     .spread(result => {
-      console.log(result);
       return result;
     })
     .catch(err => {
@@ -67,7 +66,7 @@ const updateSession = (info) => {
     { description: info.description }
   )
     .then(result => {
-      console.log(result)
+      // console.log(result)
     })
     .catch(err => {
       console.error(err);

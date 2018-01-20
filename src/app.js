@@ -130,20 +130,17 @@ app.post('/addClass', (req, res) => {
 // Homework Route ================
 // ===============================
 app.post('/upload/:userId/:sessionId', (req, res) => {
-  console.log('fired');
   const { userId, sessionId } = req.params;
-  console.log(userId);
-  console.log(sessionId);
   const newPhoto = req.files['photo'].data.toString('base64');
   const type = req.files['photo'].mimetype;
   //const userEmail = req.params[0];
   // Uploads to cloudinary
   cloudinary.v2.uploader.upload(`data:${type};base64,${newPhoto}`, (err, photo) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       res.status(400).send(err);
     } else {
-      console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
+      // console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
       //Photo.save(photo.url) to database
     }
   });
@@ -199,8 +196,6 @@ app.get('/classRoster', (req, res) => {
 // ===============================
 app.get('/dashboard', (req, res) => {
   const userId = req.query.userId;
-  console.log('req.query');
-  console.log(req.query);
   sessionDB.getSessions(userId)
     .then((sessions) => {
       const client = new cronofy({
