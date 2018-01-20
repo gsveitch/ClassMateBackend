@@ -198,11 +198,16 @@ app.get('/classRoster', (req, res) => {
 // Dashboard Route ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
+  console.log(req.query, 'req.query');
   const userId = req.query.userId;
   const tempUser = 2
+<<<<<<< HEAD
   // console.log('req.query');
   // console.log(req.query);
   sessionDB.getSessions(userId)
+=======
+  sessionDB.getSessions(tempUser)
+>>>>>>> 349ec3390e91417cec8c920087ee9239dc126dfe
     .then((sessionInfo) => {
       const client = new cronofy({
         access_token: process.env.CRONOFY_ACCESS_TOKEN,

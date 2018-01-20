@@ -31,7 +31,7 @@ const findAssignment = (id) => {
   })
     .then(results => {
       const dueDates = [];
-      results.forEach(el => dueDates.push([el.title, el.dueDate]));
+      results.forEach(el => dueDates.push({id: el.id, title: el.title, dueDate: el.dueDate}));
       return dueDates;
     })
     .catch(err => console.error(err));
