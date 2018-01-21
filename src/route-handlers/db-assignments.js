@@ -32,7 +32,7 @@ const findAssignment = (id) => {
   })
     .then(results => {
       const dueDates = [];
-      results.forEach(el => dueDates.push({id: el.id, title: el.title, dueDate: el.dueDate}));
+      results.forEach(el => dueDates.push({id: el.id, title: el.title, dueDate: el.dueDate, sessionId: el.id_session}));
       return dueDates;
     })
     .catch(err => console.error(err));
