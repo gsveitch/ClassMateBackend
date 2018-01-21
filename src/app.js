@@ -114,7 +114,7 @@ app.get('/studentInformation', (req, res) => {
 // ===============================
 // Session Routes ================
 // ===============================
-app.get('/addClass', (req, res) => {
+app.post('/addClass', (req, res) => {
   const user = req.body.userId;
   // const tempUser = 2;
   const session = {
