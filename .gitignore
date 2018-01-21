@@ -112,5 +112,6 @@ lib/
 data/
 
 .env
+package-lock.json
 
 calendarAPIJSON
