@@ -112,5 +112,7 @@ lib/
 data/
 
 .env
+package-lock.json
+.vscode/
 
 calendarAPIJSON

@@ -114,12 +114,18 @@ app.get('/studentInformation', (req, res) => {
 // ===============================
 // Session Routes ================
 // ===============================
-app.post('/addClass', (req, res) => {
+app.get('/addClass', (req, res) => {
+  const user = req.body.userId;
+  // const tempUser = 2;
   const session = {
     description: req.body.description,
     joinCode: req.body.joinCode,
   };
-  sessionDB.findOrCreateSession(session)
+  // const tempSession = {
+  //   description: `Mr. Ledet's Fifth Grade Class`,
+  //   joinCode: 'led123'
+  // };
+  sessionDB.findOrCreateSession(session, user)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
 });
@@ -214,6 +220,7 @@ app.get('/dashboard', (req, res) => {
         .then((formattedCalender) => {
           const reformat = {
             sessionInfo,
+            // formattedCalendar
           };
           res.status(201).send(reformat);
         })
