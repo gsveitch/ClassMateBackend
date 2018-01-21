@@ -117,15 +117,15 @@ app.get('/studentInformation', (req, res) => {
 // ===============================
 app.get('/addClass', (req, res) => {
   const user = req.body.userId;
-  const tempUser = 2;
+  // const tempUser = 2;
   const session = {
     description: req.body.description,
     joinCode: req.body.joinCode,
   };
-  const tempSession = {
-    description: `Mr. Ledet's Fifth Grade Class`,
-    joinCode: 'led123'
-  };
+  // const tempSession = {
+  //   description: `Mr. Ledet's Fifth Grade Class`,
+  //   joinCode: 'led123'
+  // };
   sessionDB.findOrCreateSession(session, user)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
