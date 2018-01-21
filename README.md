@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # classmateserverthrowaway
 
 > serverTesta
@@ -56,6 +55,3 @@ __0.1.0__
 Copyright (c) 2016
 
 Licensed under the [MIT license](LICENSE).
-=======
-# ClassMateBackend
->>>>>>> bac3846972af095b08dcc22cb807cd0d4779da6a

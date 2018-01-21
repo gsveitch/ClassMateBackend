@@ -208,11 +208,7 @@ app.get('/classRoster', (req, res) => {
 app.get('/dashboard', (req, res) => {
   console.log(req.query, 'req.query');
   const userId = req.query.userId;
-<<<<<<< HEAD
-  const tempUser = 2
-=======
   //const tempUser = 2
->>>>>>> 6c219d0fea4038090b1fc579f050387066ecbb89
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
       const client = new cronofy({
@@ -224,11 +220,7 @@ app.get('/dashboard', (req, res) => {
         .then((formattedCalender) => {
           const reformat = {
             sessionInfo,
-<<<<<<< HEAD
-            // formattedCalender
-=======
             // formattedCalendar
->>>>>>> 6c219d0fea4038090b1fc579f050387066ecbb89
           };
           res.status(201).send(reformat);
         })
