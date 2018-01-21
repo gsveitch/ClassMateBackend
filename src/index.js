@@ -3,7 +3,7 @@ const logger = require('winston');
 const app = require('./app');
 const port = app.get('port');
 const server = app.listen(port);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, { 'pingInterval': 2000, pingTimeout: 30000 });
 
 io.on('connection', (socket) => {
   console.log('User connected');
