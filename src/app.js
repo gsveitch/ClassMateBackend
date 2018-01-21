@@ -204,7 +204,7 @@ app.get('/dashboard', (req, res) => {
   console.log(req.query, 'req.query');
   const userId = req.query.userId;
   const tempUser = 2
-  sessionDB.getSessions(tempUser)
+  sessionDB.getSessions(userId)
     .then((sessionInfo) => {
       const client = new cronofy({
         access_token: process.env.CRONOFY_ACCESS_TOKEN,
@@ -215,7 +215,7 @@ app.get('/dashboard', (req, res) => {
         .then((formattedCalender) => {
           const reformat = {
             sessionInfo,
-            formattedCalender
+            // formattedCalender
           };
           res.status(201).send(reformat);
         })
