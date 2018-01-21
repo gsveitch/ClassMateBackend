@@ -115,12 +115,18 @@ app.get('/studentInformation', (req, res) => {
 // ===============================
 // Session Routes ================
 // ===============================
-app.post('/addClass', (req, res) => {
+app.get('/addClass', (req, res) => {
+  const user = req.body.userId;
+  const tempUser = 2;
   const session = {
     description: req.body.description,
     joinCode: req.body.joinCode,
   };
-  sessionDB.findOrCreateSession(session)
+  const tempSession = {
+    description: `Mr. Ledet's Fifth Grade Class`,
+    joinCode: 'led123'
+  };
+  sessionDB.findOrCreateSession(tempSession, tempUser)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
 });
@@ -203,8 +209,8 @@ app.get('/classRoster', (req, res) => {
 app.get('/dashboard', (req, res) => {
   console.log(req.query, 'req.query');
   const userId = req.query.userId;
-  const tempUser = 2
-  sessionDB.getSessions(tempUser)
+  // const tempUser = 2
+  sessionDB.getSessions(userId)
     .then((sessionInfo) => {
       const client = new cronofy({
         access_token: process.env.CRONOFY_ACCESS_TOKEN,
@@ -215,7 +221,7 @@ app.get('/dashboard', (req, res) => {
         .then((formattedCalender) => {
           const reformat = {
             sessionInfo,
-            formattedCalender
+            // formattedCalender
           };
           res.status(201).send(reformat);
         })
