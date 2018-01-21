@@ -59,7 +59,6 @@ cloudinary.config({
 const fileUpload = require('express-fileupload');
 app.use(fileUpload());
 
-////******************************************** */
 // ===============================
 // User login/creations ==========
 // ===============================
@@ -115,12 +114,18 @@ app.get('/studentInformation', (req, res) => {
 // ===============================
 // Session Routes ================
 // ===============================
-app.post('/addClass', (req, res) => {
+app.get('/addClass', (req, res) => {
+  const user = req.body.userId;
+  // const tempUser = 2;
   const session = {
     description: req.body.description,
     joinCode: req.body.joinCode,
   };
-  sessionDB.findOrCreateSession(session)
+  // const tempSession = {
+  //   description: `Mr. Ledet's Fifth Grade Class`,
+  //   joinCode: 'led123'
+  // };
+  sessionDB.findOrCreateSession(session, user)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
 });
@@ -203,7 +208,11 @@ app.get('/classRoster', (req, res) => {
 app.get('/dashboard', (req, res) => {
   console.log(req.query, 'req.query');
   const userId = req.query.userId;
+<<<<<<< HEAD
   const tempUser = 2
+=======
+  //const tempUser = 2
+>>>>>>> 6c219d0fea4038090b1fc579f050387066ecbb89
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
       const client = new cronofy({
@@ -215,7 +224,11 @@ app.get('/dashboard', (req, res) => {
         .then((formattedCalender) => {
           const reformat = {
             sessionInfo,
+<<<<<<< HEAD
             // formattedCalender
+=======
+            // formattedCalendar
+>>>>>>> 6c219d0fea4038090b1fc579f050387066ecbb89
           };
           res.status(201).send(reformat);
         })
