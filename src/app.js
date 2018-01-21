@@ -126,7 +126,7 @@ app.get('/addClass', (req, res) => {
     description: `Mr. Ledet's Fifth Grade Class`,
     joinCode: 'led123'
   };
-  sessionDB.findOrCreateSession(tempSession, tempUser)
+  sessionDB.findOrCreateSession(session, user)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
 });
