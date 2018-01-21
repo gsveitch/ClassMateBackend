@@ -59,7 +59,6 @@ cloudinary.config({
 const fileUpload = require('express-fileupload');
 app.use(fileUpload());
 
-////******************************************** */
 // ===============================
 // User login/creations ==========
 // ===============================
@@ -209,7 +208,7 @@ app.get('/classRoster', (req, res) => {
 app.get('/dashboard', (req, res) => {
   console.log(req.query, 'req.query');
   const userId = req.query.userId;
-  // const tempUser = 2;
+  //const tempUser = 2
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
       const client = new cronofy({
@@ -221,7 +220,6 @@ app.get('/dashboard', (req, res) => {
         .then((formattedCalender) => {
           const reformat = {
             sessionInfo,
-            // formattedCalender
           };
           res.status(201).send(reformat);
         })
