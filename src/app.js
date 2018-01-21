@@ -220,6 +220,7 @@ app.get('/dashboard', (req, res) => {
         .then((formattedCalender) => {
           const reformat = {
             sessionInfo,
+            // formattedCalendar
           };
           res.status(201).send(reformat);
         })
