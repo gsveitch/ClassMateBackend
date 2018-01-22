@@ -10,6 +10,14 @@ const client = new cronofy({
     access_token: process.env.CRONOFY_ACCESS_TOKEN,
 });
 
+//Get today's current date
+let now = new Date();
+now = JSON.stringify(now);
+let today = now.split('T')[0].slice(1, now.length-1);
+let currentYear = today.slice(0, 4);
+let monthDay = today.slice(5, today.length);
+let currentDate = `${monthDay}-${currentYear}`;
+
 const getCalendar = (calendarName) => {
     
     var options = {
@@ -24,19 +32,22 @@ const getCalendar = (calendarName) => {
             }
         }
         for(let i=0; i<calEvents.length; i++){
-            let event = {
-                summary: '',
-                description: '',
-                startTime: '',
-                endTime: '',
-                location: '',
+            let eventDate = convertTime(calEvents[i].start);
+            if(eventDate.date === currentDate){
+                let event = {
+                    summary: '',
+                    description: '',
+                    startTime: '',
+                    endTime: '',
+                    location: '',
+                }
+                event.summary = calEvents[i].summary;
+                event.description = calEvents[i].description;
+                event.startTime = convertTime(calEvents[i].start);
+                event.endTime = convertTime(calEvents[i].end);
+                event.location = calEvents[i].location.description;
+                returnEvents.push(event); 
             }
-            event.summary = calEvents[i].summary;
-            event.description = calEvents[i].description;
-            event.startTime = convertTime(calEvents[i].start);
-            event.endTime = convertTime(calEvents[i].end);
-            event.location = calEvents[i].location.description;
-            returnEvents.push(event);
         }
         return returnEvents;
     })

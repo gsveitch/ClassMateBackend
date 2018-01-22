@@ -204,21 +204,16 @@ app.get('/classRoster', (req, res) => {
 app.get('/dashboard', (req, res) => {
   // console.log(req.query, 'req.query');
   const userId = req.query.userId;
-<<<<<<< HEAD
-  const tempUser = 2;
-  sessionDB.getSessions(tempUser)
-=======
   //const tempUser = 2
   sessionDB.getSessions(userId)
->>>>>>> 8df3ece28e2dce6522ab7216d9320ed876f32463
     .then((sessionInfo) => {
       //call calendar API for calendar events
       const calendarName = 'English Class';
       calApi.getCalendar(calendarName)
-        .then((formattedCalender) => {
+        .then((formattedCalendar) => {
           const reformat = {
             sessionInfo,
-            // formattedCalendar
+            formattedCalendar
           };
           res.status(201).send(reformat);
         })
