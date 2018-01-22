@@ -21,7 +21,6 @@ const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
-const cronofy = require('cronofy');
 const calApi = require('./services/calendar.js'); 
 
 const OAuth2 = google.auth.OAuth2;
@@ -135,10 +134,7 @@ app.post('/addClass', (req, res) => {
 // Homework Route ================
 // ===============================
 app.post('/upload/:userId/:sessionId', (req, res) => {
-  console.log('fired');
   const { userId, sessionId } = req.params;
-  console.log(userId);
-  console.log(sessionId);
   const newPhoto = req.files['photo'].data.toString('base64');
   const type = req.files['photo'].mimetype;
   //const userEmail = req.params[0];
@@ -149,7 +145,7 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
       res.status(400).send(err);
     } else {
       const photoUrl = photo.url;
-      console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
+      // console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
       homeworkDB.uploadHomework(userId, photoUrl)
         .then(result => result)
         .catch(err => console.error(err));
@@ -208,21 +204,18 @@ app.post('/classRoster', (req, res) => {
 // Large Routes ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
-  console.log(req.query, 'req.query');
+  // console.log(req.query, 'req.query');
   const userId = req.query.userId;
   //const tempUser = 2
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
-      const client = new cronofy({
-        access_token: process.env.CRONOFY_ACCESS_TOKEN,
-      });
       //call calendar API for calendar events
       const calendarName = 'English Class';
       calApi.getCalendar(calendarName)
-        .then((formattedCalender) => {
+        .then((formattedCalendar) => {
           const reformat = {
             sessionInfo,
-            // formattedCalendar
+            formattedCalendar
           };
           res.status(201).send(reformat);
         })

@@ -18,7 +18,6 @@ const addParticipant = (info) => {
     },
   })
     .then(result => {
-      console.log(result[0].dataValues, 'this is result.dataValues from session Find');
       const session = result[0].dataValues;
       const className = session.description;
       const classId = session.id;
@@ -40,7 +39,6 @@ const addParticipant = (info) => {
             sessionId: classId,
             className: className,
           };
-          console.log(format);
           return format;
         })
         .catch(err => {
