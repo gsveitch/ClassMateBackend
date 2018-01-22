@@ -168,8 +168,9 @@ app.get('/createAssignment', (req, res) => {
     .catch(err => console.error(err));
 });
 
-app.get('/getAssignment', (req, res) => {
-  const sessionId = 2;
+app.post('/getAssignment', (req, res) => {
+  const tempSessionId = 2;
+  const sessionId = req.body.sessionId;
   assignmentDB.findAssignment(sessionId)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
@@ -190,8 +191,9 @@ app.post('/joinClass', (req, res) => {
     .catch(err => console.error(err));
 });
 
-app.get('/classRoster', (req, res) => {
-  const sessionId = 2;
+app.post('/classRoster', (req, res) => {
+  const tempSessionId = 2;
+  const sessionId = req.body.sessionId;
   participantDB.searchParticipants(sessionId)
     .then(roster => res.status(201).send(roster))
     .catch(err => console.error(err)); 
@@ -199,7 +201,7 @@ app.get('/classRoster', (req, res) => {
 // ===============================
 
 // ===============================
-// Dashboard Route ===============
+// Large Routes ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
   // console.log(req.query, 'req.query');
@@ -216,6 +218,31 @@ app.get('/dashboard', (req, res) => {
             formattedCalendar
           };
           res.status(201).send(reformat);
+        })
+        .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+});
+
+app.get('/classInfo', (req, res) => {
+  const sessionId = req.query.sessionId;
+  // const tempSessionId = 2;
+  assignmentDB.findAssignment(sessionId)
+    .then(assignments => {
+      console.log(assignments);
+      participantDB.searchParticipants(tempSessionId)
+        .then(participants => {
+          const students = [];
+          participants.forEach(el => {
+            if (!el.email) {
+              students.push({ id: el.id, nameFirst: el.nameFirst, nameLast: el.nameLast, gradeLevel: el.gradeLevel, photoUrl: el.photoUrl, id_emergencyContact: el.id_emergencyContact });
+            }
+          });
+          const format = {
+            assignments,
+            students
+          };
+          res.status(201).send(format);
         })
         .catch(err => console.error(err));
     })
