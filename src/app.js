@@ -21,7 +21,6 @@ const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
-const cronofy = require('cronofy');
 const calApi = require('./services/calendar.js'); 
 
 const OAuth2 = google.auth.OAuth2;
@@ -198,20 +197,11 @@ app.get('/classRoster', (req, res) => {
 // Dashboard Route ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
-  console.log(req.query, 'req.query');
+  // console.log(req.query, 'req.query');
   const userId = req.query.userId;
-  const tempUser = 2
-<<<<<<< HEAD
-  // console.log('req.query');
-  // console.log(req.query);
-  sessionDB.getSessions(userId)
-=======
+  const tempUser = 2;
   sessionDB.getSessions(tempUser)
->>>>>>> 349ec3390e91417cec8c920087ee9239dc126dfe
     .then((sessionInfo) => {
-      const client = new cronofy({
-        access_token: process.env.CRONOFY_ACCESS_TOKEN,
-      });
       //call calendar API for calendar events
       const calendarName = 'English Class';
       calApi.getCalendar(calendarName)
