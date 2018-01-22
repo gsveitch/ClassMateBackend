@@ -13,20 +13,34 @@ const assignment = require('./db-assignments.js');
 // };
 
 // Session Find or Create
-const findOrCreateSession = (info) => {
+const findOrCreateSession = (sessionInfo, userId) => {
   return db.Session.findOrCreate({
     where:{
-      id: info.id,
-      description: info.description,
+      id: sessionInfo.id,
+      description: sessionInfo.description,
     },
     defaults:{
-      description: info.description,
+      description: sessionInfo.description,
       calendarId: null,
-      joinCode: info.joinCode,
+      joinCode: sessionInfo.joinCode,
     },
   })
     .spread(result => {
-      return result;
+      // console.log(result);
+      // return result;
+      return db.Participant.create({
+        id_user: userId,
+        id_session: result.dataValues.id,
+        id_participant_type: 2,
+      })
+        .then(participant => {
+          const format = {
+            session: result.dataValues,
+            teacherInfo: participant.dataValues
+          };
+          return format;
+        })
+        .catch(err => console.error(err));
     })
     .catch(err => {
       console.error(err);
