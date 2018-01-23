@@ -13,7 +13,6 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const google = require('googleapis');
-const googleAuth = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const db = require('../app/seeders/db.js');
 const userDB = require('./route-handlers/db-users.js');
@@ -64,7 +63,6 @@ app.use(fileUpload());
 app.post('/login', (req,res) => {
   const user = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   let teacher;
-  let formattedCalendar;
   user.verifyIdToken(
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
@@ -86,13 +84,6 @@ app.post('/login', (req,res) => {
     }
   );
 });
-
-// app.post('/studentLogin', (req,res) => {
-//   const student = {username: req.body.userName, password: req.body.password};
-//   userDB.findStudent(student)
-//     .then(student => res.status(201).send(student))
-//     .catch(err => console.error(err));
-// });
 
 app.post('/studentCreate', (req, res) => {
   const student = req.body;
@@ -204,15 +195,13 @@ app.post('/classRoster', (req, res) => {
 // Large Routes ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
-  // console.log(req.query, 'req.query');
   const userId = req.query.userId;
-  //const tempUser = 2
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
-      //call calendar API for calendar events
-      const calendarName = 'English Class';
-      calApi.getCalendar(calendarName)
+      // console.log('sessionInfo: ', sessionInfo);
+      calApi.getCalendar(sessionInfo)
         .then((formattedCalendar) => {
+          // console.log('formatted calendar: ', formattedCalendar);
           const reformat = {
             sessionInfo,
             formattedCalendar
@@ -226,11 +215,9 @@ app.get('/dashboard', (req, res) => {
 
 app.get('/classInfo', (req, res) => {
   const sessionId = req.query.sessionId;
-  // const tempSessionId = 2;
   assignmentDB.findAssignment(sessionId)
     .then(assignments => {
-      console.log(assignments);
-      participantDB.searchParticipants(tempSessionId)
+      participantDB.searchParticipants(sessionId)
         .then(participants => {
           const students = [];
           participants.forEach(el => {
