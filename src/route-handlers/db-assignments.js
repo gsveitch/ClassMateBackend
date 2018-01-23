@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../../app/seeders/db.js');
+const participantDB = require('./db-participants');
 
 // Assignment find/create
 // MUST RECEIVE SESSION ID FOR ASSIGNMENT CREATION
@@ -42,6 +43,7 @@ const findAssignment = (id) => {
 const deleteAssignment = (info) => {
   return db.Assignment.destroy({
     where:{
+      id: info.id,
       title: info.title,
     }
   })
@@ -53,7 +55,15 @@ const deleteAssignment = (info) => {
     });
 };
 
+const checkAssignment = (sessionId) => {
+  return participantDB.searchParticipants(sessionId)
+    .then(participants => {
+      return participants;
+    })
+    .catch(err => console.error(err));
+};
 
 module.exports.findOrCreateAssignment = findOrCreateAssignment;
 module.exports.deleteAssignment = deleteAssignment;
 module.exports.findAssignment = findAssignment;
+module.exports.checkAssignment = checkAssignment;

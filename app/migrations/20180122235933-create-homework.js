@@ -12,18 +12,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       id_assignment: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Assignments',
-          key: 'id'
-        },
+        type: Sequelize.INTEGER
       },
       id_participant: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Participants',
-          key: 'id'
-        },
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

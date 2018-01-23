@@ -10,5 +10,16 @@ const uploadHomework = (id, photoUrl) => {
     .catch(err => console.error(err));
 };
 
+const findHomework = (arr) => {
+  return db.Homework.findAll({
+    where: {
+      id_participant: arr
+    },
+  })
+    .then(results => results)
+    .catch(err => console.error(err));
+}
+
 
 module.exports.uploadHomework = uploadHomework;
+module.exports.findHomework = findHomework;

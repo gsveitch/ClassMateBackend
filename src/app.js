@@ -180,6 +180,49 @@ app.post('/getAssignment', (req, res) => {
     .catch(err => console.error(err));
 });
 
+app.get('/checkAssignment', (req, res) => {
+  const tempSessionId = 2;
+  const tempAssignmentId = 5;
+  const sessionId = req.query.sessionId;
+  const assignmentId = req.query.assignmentId;
+  assignmentDB.checkAssignment(tempSessionId)
+    .then(results => {
+      // console.log(results, 'results from check assignment');
+      const ids = [];
+      results.forEach(res => ids.push(res.id_participant));
+      homeworkDB.findHomework(ids)
+        .then(res => {
+          // console.log(res.dataValues, 'res from findHomework');
+          const format = [];
+          res.forEach(el => {
+            if (ids.includes(el.id_participant)) {
+              format.push({ id_participant: el.id_participant, photoUrl: el.photoUrl });
+            }
+          });
+          console.log(format, 'this is format');
+          console.log(results, 'this is results');
+          format.forEach(le => {
+            // console.log('this is outer loop');
+            results.forEach(element => {
+              // console.log('this is inner loop');
+              if (element.id_participant === le.id_participant) {
+                element.photoUrl = le.photoUrl;
+              }
+              // console.log(le, 'le from double loop');
+              // console.log(element, 'element from double loop');
+              // element.id_participant === le.id_participant ? element.photoUrl = le.photoUrl : element.photoUrl = null;
+            });
+          });
+          console.log(results, 'RESULTS AFTER MERGE');
+          // res.forEach(el => {
+          //   format.push()
+          // })
+        })
+        .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+});
+
 // ===============================
 
 // ===============================
@@ -237,7 +280,7 @@ app.get('/classInfo', (req, res) => {
   assignmentDB.findAssignment(sessionId)
     .then(assignments => {
       console.log(assignments);
-      participantDB.searchParticipants(tempSessionId)
+      participantDB.searchParticipants(sessionId)
         .then(participants => {
           const students = [];
           participants.forEach(el => {

@@ -66,7 +66,17 @@ const searchParticipants = (sessionId) => {
           id: userIds
         },
       })
-        .then(user => user)
+        .then(user => {
+          const format = [];
+          user.forEach(usr => {
+            roster.forEach(el => {
+              if (usr.id === el.id_user && !usr.email) {
+                format.push({ id: usr.id, nameFirst: usr.nameFirst, nameLast: usr.nameLast, id_participant: el.id });
+              }
+            });
+          });
+          return format;
+        })
         .catch(err => console.error(err));
     })
     .catch(err => console.error(err));
