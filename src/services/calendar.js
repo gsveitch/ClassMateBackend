@@ -19,46 +19,49 @@ let monthDay = today.slice(5, today.length);
 let currentDate = `${monthDay}-${currentYear}`;
 
 const getCalendar = (sessionInfo) => {
-    
-    console.log('session info is: ', sessionInfo);
-}
-    // var options = {
-    //     tzid: 'America/Chicago'
-    // };
+    let calendars = [];
+    for(let i=0; i<sessionInfo.sessions.length; i++){
+        calendars.push(sessionInfo.sessions[i].sessionName);
+    }
+    var options = {
+        tzid: 'America/Chicago',
+        from: now,
+        // calendar_ids: 'cal_W15uIo2@zzUVAA4u_1e-xBTEfV1j1wWk-Zqk57w',
+    };
 
-    // return client.readEvents(options)
-    // .then(function (events) {
-    //     for(let i=0; i<events.events.length; i++){
-    //         if(events.events[i].summary === calendarName){
-    //             calEvents.push(events.events[i]);
-    //         }
-    //     }
-    //     for(let i=0; i<calEvents.length; i++){
-    //         let eventDate = convertTime(calEvents[i].start);
-    //         if(eventDate.date === currentDate){
-    //             let event = {
-    //                 summary: '',
-    //                 description: '',
-    //                 startTime: '',
-    //                 endTime: '',
-    //                 location: '',
-    //             }
-    //             event.summary = calEvents[i].summary;
-    //             event.description = calEvents[i].description;
-    //             event.startTime = convertTime(calEvents[i].start);
-    //             event.endTime = convertTime(calEvents[i].end);
-    //             event.location = calEvents[i].location.description;
-    //             if(!returnEvents.contains(event)){
-    //                 returnEvents.push(event); 
-    //             }
-    //         }
-    //     }
-    //     return returnEvents;
-    // })
-    // .catch(err => {
-    //     console.error(err);
-    // });
-// };
+    return client.readEvents(options)
+    .then(function (events) {
+        for(let j=0; j<calendars.length; j++){
+            for(let i=0; i<events.events.length; i++){
+                if(events.events[i].summary === calendars[j]){
+                    calEvents.push(events.events[i]);
+                }
+            }
+        }
+        for(let i=0; i<calEvents.length; i++){
+            let eventDate = convertTime(calEvents[i].start);
+            if(eventDate.date === currentDate){
+                let event = {
+                    summary: '',
+                    description: '',
+                    startTime: '',
+                    endTime: '',
+                    location: '',
+                }
+                event.summary = calEvents[i].summary;
+                event.description = calEvents[i].description;
+                event.startTime = convertTime(calEvents[i].start);
+                event.endTime = convertTime(calEvents[i].end);
+                event.location = calEvents[i].location.description;
+                returnEvents.push(event);
+            }
+        }
+        return returnEvents;
+    })
+    .catch(err => {
+        console.error(err);
+    });
+};
 
 // '2018-01-23T14:00:00Z'
 

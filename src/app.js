@@ -63,7 +63,6 @@ app.use(fileUpload());
 app.post('/login', (req,res) => {
   const user = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   let teacher;
-  let formattedCalendar;
   user.verifyIdToken(
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
@@ -85,13 +84,6 @@ app.post('/login', (req,res) => {
     }
   );
 });
-
-// app.post('/studentLogin', (req,res) => {
-//   const student = {username: req.body.userName, password: req.body.password};
-//   userDB.findStudent(student)
-//     .then(student => res.status(201).send(student))
-//     .catch(err => console.error(err));
-// });
 
 app.post('/studentCreate', (req, res) => {
   const student = req.body;
@@ -223,10 +215,8 @@ app.get('/dashboard', (req, res) => {
 
 app.get('/classInfo', (req, res) => {
   const sessionId = req.query.sessionId;
-  // const tempSessionId = 2;
   assignmentDB.findAssignment(sessionId)
     .then(assignments => {
-      // console.log(assignments);
       participantDB.searchParticipants(sessionId)
         .then(participants => {
           const students = [];
