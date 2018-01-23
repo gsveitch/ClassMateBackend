@@ -98,7 +98,6 @@ const findStudentInfo = (id) => {
     },
   })
     .then(result => {
-      console.log(result, 'this is result of finding user info')
       const student = result.dataValues
       return db.EmergencyContact.find({
         where: {

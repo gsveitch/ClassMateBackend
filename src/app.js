@@ -21,7 +21,6 @@ const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
-const cronofy = require('cronofy');
 const calApi = require('./services/calendar.js'); 
 
 const OAuth2 = google.auth.OAuth2;
@@ -135,10 +134,7 @@ app.post('/addClass', (req, res) => {
 // Homework Route ================
 // ===============================
 app.post('/upload/:userId/:sessionId', (req, res) => {
-  console.log('fired');
   const { userId, sessionId } = req.params;
-  console.log(userId);
-  console.log(sessionId);
   const newPhoto = req.files['photo'].data.toString('base64');
   const type = req.files['photo'].mimetype;
   //const userEmail = req.params[0];
@@ -149,7 +145,7 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
       res.status(400).send(err);
     } else {
       const photoUrl = photo.url;
-      console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
+      // console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
       homeworkDB.uploadHomework(userId, photoUrl)
         .then(result => result)
         .catch(err => console.error(err));
@@ -172,8 +168,9 @@ app.get('/createAssignment', (req, res) => {
     .catch(err => console.error(err));
 });
 
-app.get('/getAssignment', (req, res) => {
-  const sessionId = 2;
+app.post('/getAssignment', (req, res) => {
+  const tempSessionId = 2;
+  const sessionId = req.body.sessionId;
   assignmentDB.findAssignment(sessionId)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
@@ -194,8 +191,9 @@ app.post('/joinClass', (req, res) => {
     .catch(err => console.error(err));
 });
 
-app.get('/classRoster', (req, res) => {
-  const sessionId = 2;
+app.post('/classRoster', (req, res) => {
+  const tempSessionId = 2;
+  const sessionId = req.body.sessionId;
   participantDB.searchParticipants(sessionId)
     .then(roster => res.status(201).send(roster))
     .catch(err => console.error(err)); 
@@ -203,26 +201,48 @@ app.get('/classRoster', (req, res) => {
 // ===============================
 
 // ===============================
-// Dashboard Route ===============
+// Large Routes ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
-  console.log(req.query, 'req.query');
+  // console.log(req.query, 'req.query');
   const userId = req.query.userId;
   //const tempUser = 2
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
-      const client = new cronofy({
-        access_token: process.env.CRONOFY_ACCESS_TOKEN,
-      });
       //call calendar API for calendar events
       const calendarName = 'English Class';
       calApi.getCalendar(calendarName)
-        .then((formattedCalender) => {
+        .then((formattedCalendar) => {
           const reformat = {
             sessionInfo,
-            // formattedCalendar
+            formattedCalendar
           };
           res.status(201).send(reformat);
+        })
+        .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+});
+
+app.get('/classInfo', (req, res) => {
+  const sessionId = req.query.sessionId;
+  // const tempSessionId = 2;
+  assignmentDB.findAssignment(sessionId)
+    .then(assignments => {
+      console.log(assignments);
+      participantDB.searchParticipants(sessionId)
+        .then(participants => {
+          const students = [];
+          participants.forEach(el => {
+            if (!el.email) {
+              students.push({ id: el.id, nameFirst: el.nameFirst, nameLast: el.nameLast, gradeLevel: el.gradeLevel, photoUrl: el.photoUrl, id_emergencyContact: el.id_emergencyContact });
+            }
+          });
+          const format = {
+            assignments,
+            students
+          };
+          res.status(201).send(format);
         })
         .catch(err => console.error(err));
     })
