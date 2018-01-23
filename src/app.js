@@ -13,7 +13,6 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const google = require('googleapis');
-const googleAuth = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const db = require('../app/seeders/db.js');
 const userDB = require('./route-handlers/db-users.js');
@@ -229,7 +228,7 @@ app.get('/classInfo', (req, res) => {
   // const tempSessionId = 2;
   assignmentDB.findAssignment(sessionId)
     .then(assignments => {
-      console.log(assignments);
+      // console.log(assignments);
       participantDB.searchParticipants(tempSessionId)
         .then(participants => {
           const students = [];
