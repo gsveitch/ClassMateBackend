@@ -18,43 +18,47 @@ let currentYear = today.slice(0, 4);
 let monthDay = today.slice(5, today.length);
 let currentDate = `${monthDay}-${currentYear}`;
 
-const getCalendar = (calendarName) => {
+const getCalendar = (sessionInfo) => {
     
-    var options = {
-        tzid: 'America/Chicago'
-    };
+    console.log('session info is: ', sessionInfo);
+}
+    // var options = {
+    //     tzid: 'America/Chicago'
+    // };
 
-    return client.readEvents(options)
-    .then(function (events) {
-        for(let i=0; i<events.events.length; i++){
-            if(events.events[i].summary === calendarName){
-                calEvents.push(events.events[i]);
-            }
-        }
-        for(let i=0; i<calEvents.length; i++){
-            let eventDate = convertTime(calEvents[i].start);
-            if(eventDate.date === currentDate){
-                let event = {
-                    summary: '',
-                    description: '',
-                    startTime: '',
-                    endTime: '',
-                    location: '',
-                }
-                event.summary = calEvents[i].summary;
-                event.description = calEvents[i].description;
-                event.startTime = convertTime(calEvents[i].start);
-                event.endTime = convertTime(calEvents[i].end);
-                event.location = calEvents[i].location.description;
-                returnEvents.push(event); 
-            }
-        }
-        return returnEvents;
-    })
-    .catch(err => {
-        console.error(err);
-    });
-};
+    // return client.readEvents(options)
+    // .then(function (events) {
+    //     for(let i=0; i<events.events.length; i++){
+    //         if(events.events[i].summary === calendarName){
+    //             calEvents.push(events.events[i]);
+    //         }
+    //     }
+    //     for(let i=0; i<calEvents.length; i++){
+    //         let eventDate = convertTime(calEvents[i].start);
+    //         if(eventDate.date === currentDate){
+    //             let event = {
+    //                 summary: '',
+    //                 description: '',
+    //                 startTime: '',
+    //                 endTime: '',
+    //                 location: '',
+    //             }
+    //             event.summary = calEvents[i].summary;
+    //             event.description = calEvents[i].description;
+    //             event.startTime = convertTime(calEvents[i].start);
+    //             event.endTime = convertTime(calEvents[i].end);
+    //             event.location = calEvents[i].location.description;
+    //             if(!returnEvents.contains(event)){
+    //                 returnEvents.push(event); 
+    //             }
+    //         }
+    //     }
+    //     return returnEvents;
+    // })
+    // .catch(err => {
+    //     console.error(err);
+    // });
+// };
 
 // '2018-01-23T14:00:00Z'
 

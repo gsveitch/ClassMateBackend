@@ -203,15 +203,13 @@ app.post('/classRoster', (req, res) => {
 // Large Routes ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
-  // console.log(req.query, 'req.query');
   const userId = req.query.userId;
-  //const tempUser = 2
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
-      //call calendar API for calendar events
-      const calendarName = 'English Class';
-      calApi.getCalendar(calendarName)
+      // console.log('sessionInfo: ', sessionInfo);
+      calApi.getCalendar(sessionInfo)
         .then((formattedCalendar) => {
+          // console.log('formatted calendar: ', formattedCalendar);
           const reformat = {
             sessionInfo,
             formattedCalendar
@@ -229,7 +227,7 @@ app.get('/classInfo', (req, res) => {
   assignmentDB.findAssignment(sessionId)
     .then(assignments => {
       // console.log(assignments);
-      participantDB.searchParticipants(tempSessionId)
+      participantDB.searchParticipants(sessionId)
         .then(participants => {
           const students = [];
           participants.forEach(el => {

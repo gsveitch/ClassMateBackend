@@ -75,7 +75,7 @@ const getSessions = (userId) => {
               }
             });
           });
-          console.log(sessions);
+          // console.log(sessions);
           return assignment.findAssignment(sessionIds)
             .then(assignments => {
               const format = {
