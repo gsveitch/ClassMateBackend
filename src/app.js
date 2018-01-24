@@ -167,6 +167,17 @@ app.post('/getAssignment', (req, res) => {
     .catch(err => console.error(err));
 });
 
+app.get('/checkAssignment', (req, res) => {
+  console.log(req.query);
+  const tempSessionId = 2;
+  const tempAssignmentId = 5;
+  const sessionId = req.query.sessionId;
+  const assignmentId = req.query.assignmentId;
+  return assignmentDB.specificAssignment(sessionId, assignmentId)
+    .then(results => res.status(201).send(results))
+    .catch(err => console.error(err));
+});
+
 // ===============================
 
 // ===============================
