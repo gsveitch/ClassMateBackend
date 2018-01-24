@@ -4,7 +4,6 @@ const cronofy = require('cronofy');
 require('dotenv').load();
 
 const calEvents = [];
-const returnEvents = [];
 
 const client = new cronofy({
     access_token: process.env.CRONOFY_ACCESS_TOKEN,
@@ -28,9 +27,10 @@ const getCalendar = (sessionInfo) => {
         from: now,
         // calendar_ids: 'cal_W15uIo2@zzUVAA4u_1e-xBTEfV1j1wWk-Zqk57w',
     };
-
+    
     return client.readEvents(options)
     .then(function (events) {
+        let returnEvents = [];
         for(let j=0; j<calendars.length; j++){
             for(let i=0; i<events.events.length; i++){
                 if(events.events[i].summary === calendars[j]){
@@ -56,6 +56,7 @@ const getCalendar = (sessionInfo) => {
                 returnEvents.push(event);
             }
         }
+        console.log('return Events: ', returnEvents);
         return returnEvents;
     })
     .catch(err => {
