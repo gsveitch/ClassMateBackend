@@ -3,7 +3,6 @@
 const cronofy = require('cronofy');
 require('dotenv').load();
 
-const calEvents = [];
 
 const client = new cronofy({
     access_token: process.env.CRONOFY_ACCESS_TOKEN,
@@ -18,6 +17,8 @@ let monthDay = today.slice(5, today.length);
 let currentDate = `${monthDay}-${currentYear}`;
 
 const getCalendar = (sessionInfo) => {
+    const calEvents = [];
+    const returnEvents = [];
     let calendars = [];
     for(let i=0; i<sessionInfo.sessions.length; i++){
         calendars.push(sessionInfo.sessions[i].sessionName);
@@ -30,7 +31,6 @@ const getCalendar = (sessionInfo) => {
     
     return client.readEvents(options)
     .then(function (events) {
-        let returnEvents = [];
         for(let j=0; j<calendars.length; j++){
             for(let i=0; i<events.events.length; i++){
                 if(events.events[i].summary === calendars[j]){
