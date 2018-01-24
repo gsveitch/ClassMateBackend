@@ -181,34 +181,13 @@ app.post('/getAssignment', (req, res) => {
 });
 
 app.get('/checkAssignment', (req, res) => {
+  console.log(req.query);
   const tempSessionId = 2;
   const tempAssignmentId = 5;
   const sessionId = req.query.sessionId;
   const assignmentId = req.query.assignmentId;
-  return assignmentDB.checkAssignment(tempSessionId)
-    .then(results => {
-      // console.log(results, 'results from check assignment');
-      const ids = [];
-      results.forEach(res => ids.push(res.id_participant));
-      return homeworkDB.findHomework(ids)
-        .then(res => {
-          const format = [];
-          res.forEach(el => {
-            if (ids.includes(el.id_participant)) {
-              format.push({ id_participant: el.id_participant, photoUrl: el.photoUrl });
-            }
-          });
-          format.forEach(le => {
-            results.forEach(element => {
-              if (element.id_participant === le.id_participant) {
-                element.photoUrl = le.photoUrl;
-              }
-            });
-          });
-          res.status(201).send(results);
-        })
-        .catch(err => console.error(err));
-    })
+  return assignmentDB.specificAssignment(sessionId, assignmentId)
+    .then(results => res.status(201).send(results))
     .catch(err => console.error(err));
 });
 

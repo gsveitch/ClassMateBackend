@@ -10,10 +10,11 @@ const uploadHomework = (id, photoUrl) => {
     .catch(err => console.error(err));
 };
 
-const findHomework = (arr) => {
+const findHomework = (arr, assignmentId) => {
   return db.Homework.findAll({
     where: {
-      id_participant: arr
+      id_participant: arr,
+      id_assignment: assignmentId,
     },
   })
     .then(results => results)
