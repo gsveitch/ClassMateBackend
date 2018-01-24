@@ -13,7 +13,6 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const google = require('googleapis');
-const googleAuth = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const db = require('../app/seeders/db.js');
 const userDB = require('./route-handlers/db-users.js');
@@ -21,7 +20,6 @@ const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
-const cronofy = require('cronofy');
 const calApi = require('./services/calendar.js'); 
 
 const OAuth2 = google.auth.OAuth2;
@@ -65,7 +63,6 @@ app.use(fileUpload());
 app.post('/login', (req,res) => {
   const user = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   let teacher;
-  let formattedCalendar;
   user.verifyIdToken(
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
@@ -87,13 +84,6 @@ app.post('/login', (req,res) => {
     }
   );
 });
-
-// app.post('/studentLogin', (req,res) => {
-//   const student = {username: req.body.userName, password: req.body.password};
-//   userDB.findStudent(student)
-//     .then(student => res.status(201).send(student))
-//     .catch(err => console.error(err));
-// });
 
 app.post('/studentCreate', (req, res) => {
   const student = req.body;
@@ -135,10 +125,7 @@ app.post('/addClass', (req, res) => {
 // Homework Route ================
 // ===============================
 app.post('/upload/:userId/:sessionId', (req, res) => {
-  console.log('fired');
   const { userId, sessionId } = req.params;
-  console.log(userId);
-  console.log(sessionId);
   const newPhoto = req.files['photo'].data.toString('base64');
   const type = req.files['photo'].mimetype;
   //const userEmail = req.params[0];
@@ -149,7 +136,7 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
       res.status(400).send(err);
     } else {
       const photoUrl = photo.url;
-      console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
+      // console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
       homeworkDB.uploadHomework(userId, photoUrl)
         .then(result => result)
         .catch(err => console.error(err));
@@ -219,21 +206,16 @@ app.post('/classRoster', (req, res) => {
 // Large Routes ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
-  console.log(req.query, 'req.query');
   const userId = req.query.userId;
-  //const tempUser = 2
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
-      const client = new cronofy({
-        access_token: process.env.CRONOFY_ACCESS_TOKEN,
-      });
-      //call calendar API for calendar events
-      const calendarName = 'English Class';
-      calApi.getCalendar(calendarName)
-        .then((formattedCalender) => {
+      // console.log('sessionInfo: ', sessionInfo);
+      calApi.getCalendar(sessionInfo)
+        .then((formattedCalendar) => {
+          // console.log('formatted calendar: ', formattedCalendar);
           const reformat = {
             sessionInfo,
-            // formattedCalendar
+            formattedCalendar
           };
           res.status(201).send(reformat);
         })
@@ -244,10 +226,8 @@ app.get('/dashboard', (req, res) => {
 
 app.get('/classInfo', (req, res) => {
   const sessionId = req.query.sessionId;
-  // const tempSessionId = 2;
   assignmentDB.findAssignment(sessionId)
     .then(assignments => {
-      // console.log(assignments);
       participantDB.searchParticipants(sessionId)
         .then(participants => {
           const students = [];

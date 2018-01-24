@@ -13,7 +13,7 @@ const createEmergencyContact = (info) => {
     email: info.email,
   })
     .then(result => {
-      console.log(result);
+      // console.log(result);
     })
     .catch(err => {
       console.error('error in create emergency contact', err);
