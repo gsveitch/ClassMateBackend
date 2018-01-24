@@ -56,7 +56,7 @@ const getCalendar = (sessionInfo) => {
                 returnEvents.push(event);
             }
         }
-        console.log('return Events: ', returnEvents);
+        // console.log('return Events: ', returnEvents);
         return returnEvents;
     })
     .catch(err => {
