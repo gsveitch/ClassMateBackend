@@ -25,6 +25,9 @@ const calApi = require('./services/calendar.js');
 
 const OAuth2 = google.auth.OAuth2;
 const app = express(feathers());
+const aws = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
 
 require('dotenv').load();
 
@@ -57,6 +60,12 @@ cloudinary.config({
 });
 const fileUpload = require('express-fileupload');
 app.use(fileUpload());
+///****************S3********************** */
+const s3 = new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: 'us-east-1',
+});
 
 // ===============================
 // User login/creations ==========
@@ -113,7 +122,7 @@ app.post('/addClass', (req, res) => {
   // const tempUser = 2;
   const session = {
     description: req.body.description,
-    joinCode: req.body.joinCode,
+    joinCode: req.body.joinCod
   };
   // const tempSession = {
   //   description: `Mr. Ledet's Fifth Grade Class`,
@@ -140,13 +149,48 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
       res.status(400).send(err);
     } else {
       const photoUrl = photo.url;
-      // console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
-      homeworkDB.uploadHomework(userId, photoUrl)
+      console.log(photo.url); 
+      homeworkDB.uploadHomework(userId, sessionId, photoUrl)
         .then(result => result)
         .catch(err => console.error(err));
     }
   });
 });
+// ===============================
+// ===============================
+// Fun Stuffs Route ================
+// ===============================
+app.post('/funStuff/:id', (req, res) => {
+  const sessionID = req.params.id;
+  if (req.body.link) {
+    const { link, type } = req.body;
+    // funStuff.uploadFunStuff(sessionID, link, type)
+    //   .then(result => result)
+    //   .catch(err => console.error(err));
+    res.send(link);
+  } else {
+    const uploadParams = { Bucket: process.env.AWS_BUCKET, Key: '', Body: '' };
+    const { mimetype } = req.files.document;
+    const typePart = mimetype.split('/');
+    const type = typePart[typePart.length - 1];
+    uploadParams.Body = req.files.document.data;
+    uploadParams.Key = req.files.document.name;
+    s3.upload(uploadParams, function (err, data) {
+      if (err) {
+        console.log('Error', err);
+      } if (data) {
+        console.log('Upload Success', data.Location, type);
+        const document = data.location;
+        // funStuff.uploadFunStuff(sessionID, document, type)
+        //   .then(result => result)
+        //   .catch(err => console.error(err));
+        res.send(data.location);
+      }
+    });
+    
+  }
+});
+
 // ===============================
 
 // ===============================
@@ -206,7 +250,7 @@ app.post('/joinClass', (req, res) => {
   const participant = {
     userId: req.body.userId,
     joinCode: req.body.joinCode
-  }
+  };
   participantDB.addParticipant(participant)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
