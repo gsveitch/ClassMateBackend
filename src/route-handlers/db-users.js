@@ -63,6 +63,9 @@ const findOrCreateStudent = (student) => {
         newUser: true,
         info: found.dataValues
       };
+      if (found.dataValues.id_emergencyContact !== null) {
+
+      }
       if (created) {
         return format;
       } else {

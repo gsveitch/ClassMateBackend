@@ -13,7 +13,6 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const google = require('googleapis');
-const googleAuth = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const db = require('../app/seeders/db.js');
 const userDB = require('./route-handlers/db-users.js');
@@ -21,6 +20,7 @@ const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
+const emergencyContactDB = require('./route-handlers/db-emergencyContact.js');
 const calApi = require('./services/calendar.js'); 
 
 const OAuth2 = google.auth.OAuth2;
@@ -64,7 +64,6 @@ app.use(fileUpload());
 app.post('/login', (req,res) => {
   const user = new OAuth2(process.env.GOOGLE_CALENDAR_CLIENT_ID, process.env.GOOGLE_CALENDAR_SECRET, '');
   let teacher;
-  let formattedCalendar;
   user.verifyIdToken(
     req.body.idtoken,
     process.env.GOOGLE_CALENDAR_CLIENT_ID,
@@ -86,13 +85,6 @@ app.post('/login', (req,res) => {
     }
   );
 });
-
-// app.post('/studentLogin', (req,res) => {
-//   const student = {username: req.body.userName, password: req.body.password};
-//   userDB.findStudent(student)
-//     .then(student => res.status(201).send(student))
-//     .catch(err => console.error(err));
-// });
 
 app.post('/studentCreate', (req, res) => {
   const student = req.body;
@@ -155,6 +147,21 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
 // ===============================
 
 // ===============================
+// Emergency Contact Routes ======
+// ===============================
+
+app.post('/createEmergencyContact', (req, res) => {
+  console.log(req.body, 'emergency contact info');
+  const info = req.body.emergencyContact;
+  const userId = req.body.userId
+  emergencyContactDB.createEmergencyContact(info, userId)
+    .then(results => res.status(201).send(results))
+    .catch(err => console.error(err));
+});
+
+// ===============================
+
+// ===============================
 // Assignment Routes =============
 // ===============================
 app.get('/createAssignment', (req, res) => {
@@ -173,6 +180,17 @@ app.post('/getAssignment', (req, res) => {
   const sessionId = req.body.sessionId;
   assignmentDB.findAssignment(sessionId)
     .then(result => res.status(201).send(result))
+    .catch(err => console.error(err));
+});
+
+app.get('/checkAssignment', (req, res) => {
+  // console.log(req.query);
+  // const tempSessionId = 2;
+  // const tempAssignmentId = 5;
+  const sessionId = req.query.sessionId;
+  const assignmentId = req.query.assignmentId;
+  return assignmentDB.specificAssignment(sessionId, assignmentId)
+    .then(results => res.status(201).send(results))
     .catch(err => console.error(err));
 });
 
@@ -204,15 +222,13 @@ app.post('/classRoster', (req, res) => {
 // Large Routes ===============
 // ===============================
 app.get('/dashboard', (req, res) => {
-  // console.log(req.query, 'req.query');
   const userId = req.query.userId;
-  //const tempUser = 2
   sessionDB.getSessions(userId)
     .then((sessionInfo) => {
-      //call calendar API for calendar events
-      const calendarName = 'English Class';
-      calApi.getCalendar(calendarName)
+      // console.log('sessionInfo: ', sessionInfo);
+      calApi.getCalendar(sessionInfo)
         .then((formattedCalendar) => {
+          // console.log('formatted calendar: ', formattedCalendar);
           const reformat = {
             sessionInfo,
             formattedCalendar
@@ -226,10 +242,8 @@ app.get('/dashboard', (req, res) => {
 
 app.get('/classInfo', (req, res) => {
   const sessionId = req.query.sessionId;
-  // const tempSessionId = 2;
   assignmentDB.findAssignment(sessionId)
     .then(assignments => {
-      console.log(assignments);
       participantDB.searchParticipants(sessionId)
         .then(participants => {
           const students = [];
