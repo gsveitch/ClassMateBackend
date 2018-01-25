@@ -2,6 +2,7 @@
 logs
 *.log
 
+package-lock.json
 # Runtime data
 pids
 *.pid
@@ -112,7 +113,6 @@ lib/
 data/
 
 .env
-package-lock.json
 .vscode/
 
 calendarAPIJSON
