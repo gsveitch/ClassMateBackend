@@ -20,6 +20,7 @@ const assignmentDB = require('./route-handlers/db-assignments.js');
 const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
+const emergencyContactDB = require('./route-handlers/db-emergencyContact.js');
 const calApi = require('./services/calendar.js'); 
 
 const OAuth2 = google.auth.OAuth2;
@@ -143,6 +144,21 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
     }
   });
 });
+// ===============================
+
+// ===============================
+// Emergency Contact Routes ======
+// ===============================
+
+app.post('/createEmergencyContact', (req, res) => {
+  console.log(req.body, 'emergency contact info');
+  const info = req.body.emergencyContact;
+  const userId = req.body.userId
+  emergencyContactDB.createEmergencyContact(info, userId)
+    .then(results => res.status(201).send(results))
+    .catch(err => console.error(err));
+});
+
 // ===============================
 
 // ===============================
