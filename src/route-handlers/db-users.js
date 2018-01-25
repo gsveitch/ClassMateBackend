@@ -63,6 +63,9 @@ const findOrCreateStudent = (student) => {
         newUser: true,
         info: found.dataValues
       };
+      if (found.dataValues.id_emergencyContact !== null) {
+
+      }
       if (created) {
         return format;
       } else {
@@ -98,7 +101,6 @@ const findStudentInfo = (id) => {
     },
   })
     .then(result => {
-      console.log(result, 'this is result of finding user info')
       const student = result.dataValues
       return db.EmergencyContact.find({
         where: {

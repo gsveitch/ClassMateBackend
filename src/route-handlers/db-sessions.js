@@ -26,7 +26,7 @@ const findOrCreateSession = (sessionInfo, userId) => {
     },
   })
     .spread(result => {
-      console.log(result);
+      // console.log(result);
       // return result;
       return db.Participant.create({
         id_user: userId,
@@ -59,8 +59,8 @@ const getSessions = (userId) => {
       const participantIds = [];
       sessions.forEach(el => sessionIds.push(el.dataValues.id_session));
       sessions.forEach(el => participantIds.push(el.dataValues));
-      console.log(sessionIds);
-      console.log(participantIds);
+      // console.log(sessionIds);
+      // console.log(participantIds);
       return db.Session.findAll({
         where:{
           id: sessionIds,
@@ -75,7 +75,7 @@ const getSessions = (userId) => {
               }
             });
           });
-          console.log(sessions);
+          // console.log(sessions);
           return assignment.findAssignment(sessionIds)
             .then(assignments => {
               const format = {
@@ -100,7 +100,7 @@ const updateSession = (info) => {
     { description: info.description }
   )
     .then(result => {
-      console.log(result);
+      // console.log(result);
     })
     .catch(err => {
       console.error(err);

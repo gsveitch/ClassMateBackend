@@ -30,7 +30,7 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 sequelize.authenticate().then(() => {
-  console.log('Success!');
+  console.log('DB Connected');
 }).catch((err) => {
   console.error(err);
 });

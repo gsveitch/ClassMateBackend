@@ -8,7 +8,7 @@ const createBadges = (info) => {
     description: info.description,
   })
     .then(result => {
-      console.log(result);
+      // console.log(result);
     })
     .catch(err => {
       console.error(err);
