@@ -65,41 +65,8 @@ app.use(fileUpload());
 const s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: "us-east-1",
+  region: 'us-east-1',
 });
-// Create the parameters for calling createBucket
-var bucketParams = {
-  Bucket: 'classmate2'
-};
-
-// Call S3 to create the bucket
-// s3.createBucket(bucketParams, function (err, data) {
-//   if (err) {
-//     console.log("Error", err);
-//   } else {
-//     console.log("Success", data.Location);
-//   }
-// });
-
-// Initialize multers3 with our s3 config and other options
-const upload = multer({
-  storage: multerS3({
-    s3,
-    bucket: process.env.AWS_BUCKET,
-    acl: 'public-read',
-    metadata(req, file, cb) {
-      console.log('file');
-      console.log(file);
-      cb(null, {
-        fieldName: file.fieldname
-      });
-    },
-    key(req, file, cb) {
-      cb(null, Date.now().toString() + '.png');
-    }
-  })
-})
-
 
 // ===============================
 // User login/creations ==========
@@ -177,10 +144,7 @@ app.post('/addClass', (req, res) => {
 // Homework Route ================
 // ===============================
 app.post('/upload/:userId/:sessionId', (req, res) => {
-  console.log('fired');
   const { userId, sessionId } = req.params;
-  console.log(userId);
-  console.log(sessionId);
   const newPhoto = req.files['photo'].data.toString('base64');
   const type = req.files['photo'].mimetype;
   //const userEmail = req.params[0];
@@ -191,8 +155,8 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
       res.status(400).send(err);
     } else {
       const photoUrl = photo.url;
-      console.log(photo.url); // http://res.cloudinary.com/fido/image/upload/v1516338431/osxdjtj2mpm9pmhrhbfr.jpg
-      homeworkDB.uploadHomework(userId, photoUrl)
+      console.log(photo.url); 
+      homeworkDB.uploadHomework(userId, sessionId, photoUrl)
         .then(result => result)
         .catch(err => console.error(err));
     }
@@ -202,45 +166,36 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
 // ===============================
 // Fun Stuffs Route ================
 // ===============================
-
-
-// app.post('/funStuff', upload.single('photo'), (req, res, next) => {
-//   console.log('FIRED');
-//   console.log(req.files);
-//   res.json(req.file);
-// });
-
-s3.getBucketAcl({ Bucket: 'classmate2' }, function (err, data) {
-  if (err) {
-    console.log("Error", err);
-  } else if (data) {
-    console.log("Success", data.Grants);
+app.post('/funStuff/:id', (req, res) => {
+  const sessionID = req.params.id;
+  if (req.body.link) {
+    const { link, type } = req.body;
+    // funStuff.uploadFunStuff(sessionID, link, type)
+    //   .then(result => result)
+    //   .catch(err => console.error(err));
+    res.send(link);
+  } else {
+    const uploadParams = { Bucket: process.env.AWS_BUCKET, Key: '', Body: '' };
+    const { mimetype } = req.files.document;
+    const typePart = mimetype.split('/');
+    const type = typePart[typePart.length - 1];
+    uploadParams.Body = req.files.document.data;
+    uploadParams.Key = req.files.document.name;
+    s3.upload(uploadParams, function (err, data) {
+      if (err) {
+        console.log('Error', err);
+      } if (data) {
+        console.log('Upload Success', data.Location, type);
+        const document = data.location;
+        // funStuff.uploadFunStuff(sessionID, document, type)
+        //   .then(result => result)
+        //   .catch(err => console.error(err));
+        res.send(data.location);
+      }
+    });
+    
   }
 });
-app.post('/funStuff', (req, res) => {
-  console.log('fired')
-  const uploadParams = { Bucket: 'classmate2', Key: '', Body: '' };
-  console.log(req.files);
-  uploadParams.Body = req.files.document.data;
-  uploadParams.Key = req.files.document.name;
-  s3.upload(uploadParams, function (err, data) {
-    if (err) {
-      console.log("Error", err);
-    } if (data) {
-      console.log("Upload Success", data.Location);
-      s3.listObjects(bucketParams, function (err, data) {
-        if (err) {
-          console.log("Error", err);
-        } else {
-          console.log("Success", data);
-        }
-      });
-    }
-  });
-
-});
-
-
 
 // ===============================
 
