@@ -184,9 +184,9 @@ app.post('/getAssignment', (req, res) => {
 });
 
 app.get('/checkAssignment', (req, res) => {
-  console.log(req.query);
-  const tempSessionId = 2;
-  const tempAssignmentId = 5;
+  // console.log(req.query);
+  // const tempSessionId = 2;
+  // const tempAssignmentId = 5;
   const sessionId = req.query.sessionId;
   const assignmentId = req.query.assignmentId;
   return assignmentDB.specificAssignment(sessionId, assignmentId)
