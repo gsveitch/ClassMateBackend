@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
     address: DataTypes.STRING,
     phone: DataTypes.INTEGER,
     email: DataTypes.STRING,
-    phoneNumber: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
