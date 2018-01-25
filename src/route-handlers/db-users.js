@@ -21,7 +21,27 @@ const findOrCreateTeacher = (info) => {
     },
   })
     .spread(({ dataValues }) => {
-      return dataValues;
+      console.log(dataValues, 'dataValues');
+      if (dataValues.id_emergencyContact !== null) {
+        return db.EmergencyContact.findAll({
+          where: {
+            id: dataValues.id_emergencyContact,
+          },
+        })
+          .then(result => {
+            const format = {
+              user: dataValues,
+              emergencyContact: result,
+            };
+            return format;
+          })
+          .catch(err => console.error(err));
+      } else {
+        const format = {
+          user: dataValues,
+        };
+        return format;
+      }
     })
     .catch(err => {
       console.error(err);
@@ -59,18 +79,27 @@ const findOrCreateStudent = (student) => {
     },
   })
     .spread((found, created) => {
-      const format = {
-        newUser: true,
-        info: found.dataValues
-      };
       if (found.dataValues.id_emergencyContact !== null) {
-
-      }
-      if (created) {
-        return format;
+        return db.EmergencyContact.findAll({
+          where: {
+            id: found.dataValues.id_emergencyContact,
+          },
+        })
+          .then(result => {
+            const format = {
+              user: found.dataValues,
+              emergencyContact: result,
+            };
+            return format;
+          })
+          .catch(err => console.error(err));
       } else {
-        return found.dataValues;
+        const format = {
+          user: found.dataValues,
+        };
+        return format;
       }
+      
     })
     .catch(err => {
       console.error(err, 'this is error in catch');

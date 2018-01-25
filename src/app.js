@@ -98,7 +98,10 @@ app.post('/login', (req,res) => {
 app.post('/studentCreate', (req, res) => {
   const student = req.body;
   userDB.findOrCreateStudent(student)
-    .then(student => res.status(201).send(student))
+    .then(student => {
+      console.log(student);
+      res.status(201).send(student);
+    })
     .catch(err => console.error(err));
 });
 
