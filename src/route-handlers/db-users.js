@@ -21,7 +21,7 @@ const findOrCreateTeacher = (info) => {
     },
   })
     .spread(({ dataValues }) => {
-      console.log(dataValues, 'dataValues');
+      // console.log(dataValues, 'dataValues');
       if (dataValues.id_emergencyContact !== null) {
         return db.EmergencyContact.findAll({
           where: {
