@@ -175,18 +175,16 @@ app.post('/funStuff/:id', (req, res) => {
     const typePart = mimetype.split('/');
     const type = typePart[typePart.length - 1];
     const typeFinal = ['gif', 'jpg', 'jpeg', 'png', 'tiff', 'tif'].includes(type) ? 'image' : 'video';
-    // console.log(typeFinal);
-    res.send(typeFinal);
 
     uploadParams.Body = req.files.document.data;
     uploadParams.Key = req.files.document.name;
     s3.upload(uploadParams, function (err, data) {
       if (err) {
-        // console.log('Error', err);
+        console.log('Error', err);
       } if (data) {
-        // console.log('Upload Success', data.Location, typeFinal);
-        const document = data.location;
-        funStuffDB.createFunStuff(sessionID, document, type)
+        console.log('Upload Success', data.Location);
+        const document = data.Location;
+        funStuffDB.createFunStuff(sessionID, document, typeFinal)
           .then(result => result)
           .catch(err => console.error(err));
         res.send(data.location);
