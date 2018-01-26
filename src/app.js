@@ -138,8 +138,8 @@ app.post('/addClass', (req, res) => {
 // ===============================
 // Homework Route ================
 // ===============================
-app.post('/upload/:userId/:sessionId', (req, res) => {
-  const { userId, sessionId } = req.params;
+app.post('/upload/:participantId/:assignmentID', (req, res) => {
+  const { participantId, assignmentID } = req.params;
   const newPhoto = req.files['photo'].data.toString('base64');
   const type = req.files['photo'].mimetype;
   //const userEmail = req.params[0];
@@ -151,8 +151,8 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
     } else {
       const photoUrl = photo.url;
       // console.log(photo.url); 
-      homeworkDB.uploadHomework(userId, sessionId, photoUrl)
-        .then(result => result)
+      homeworkDB.uploadHomework(participantId, assignmentID, photoUrl)
+        .then(result => res.status(201).send(result))
         .catch(err => console.error(err));
     }
   });
