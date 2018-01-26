@@ -21,6 +21,7 @@ const sessionDB = require('./route-handlers/db-sessions.js');
 const participantDB = require('./route-handlers/db-participants.js');
 const homeworkDB = require('./route-handlers/db-homework.js');
 const emergencyContactDB = require('./route-handlers/db-emergencyContact.js');
+const funStuffDB = require('./route-handlers/db-funstuff.js');
 const calApi = require('./services/calendar.js'); 
 
 const OAuth2 = google.auth.OAuth2;
@@ -99,7 +100,7 @@ app.post('/studentCreate', (req, res) => {
   const student = req.body;
   userDB.findOrCreateStudent(student)
     .then(student => {
-      console.log(student);
+      // console.log(student);
       res.status(201).send(student);
     })
     .catch(err => console.error(err));
@@ -149,7 +150,7 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
       res.status(400).send(err);
     } else {
       const photoUrl = photo.url;
-      console.log(photo.url); 
+      // console.log(photo.url); 
       homeworkDB.uploadHomework(userId, sessionId, photoUrl)
         .then(result => result)
         .catch(err => console.error(err));
@@ -164,31 +165,42 @@ app.post('/funStuff/:id', (req, res) => {
   const sessionID = req.params.id;
   if (req.body.link) {
     const { link, type } = req.body;
-    // funStuff.uploadFunStuff(sessionID, link, type)
-    //   .then(result => result)
-    //   .catch(err => console.error(err));
+    funStuffDB.createFunStuff(sessionID, link, type)
+      .then(result => result)
+      .catch(err => console.error(err));
     res.send(link);
   } else {
     const uploadParams = { Bucket: process.env.AWS_BUCKET, Key: '', Body: '' };
     const { mimetype } = req.files.document;
     const typePart = mimetype.split('/');
     const type = typePart[typePart.length - 1];
+    const typeFinal = ['gif', 'jpg', 'jpeg', 'png', 'tiff', 'tif'].includes(type) ? 'image' : 'video';
+    // console.log(typeFinal);
+    res.send(typeFinal);
+
     uploadParams.Body = req.files.document.data;
     uploadParams.Key = req.files.document.name;
     s3.upload(uploadParams, function (err, data) {
       if (err) {
-        console.log('Error', err);
+        // console.log('Error', err);
       } if (data) {
-        console.log('Upload Success', data.Location, type);
+        // console.log('Upload Success', data.Location, typeFinal);
         const document = data.location;
-        // funStuff.uploadFunStuff(sessionID, document, type)
-        //   .then(result => result)
-        //   .catch(err => console.error(err));
+        funStuffDB.createFunStuff(sessionID, document, type)
+          .then(result => result)
+          .catch(err => console.error(err));
         res.send(data.location);
       }
     });
     
   }
+});
+
+app.get('/funStuff/:id', (req, res) => {
+  const sessionID = req.params.id;
+  funStuffDB.findFunStuff(sessionID)
+    .then(results => res.status(200).send(results))
+    .catch(err => console.error(err));
 });
 
 // ===============================
@@ -198,7 +210,7 @@ app.post('/funStuff/:id', (req, res) => {
 // ===============================
 
 app.post('/createEmergencyContact', (req, res) => {
-  console.log(req.body, 'emergency contact info');
+  // console.log(req.body, 'emergency contact info');
   const info = req.body.emergencyContact;
   const userId = req.body.userId
   emergencyContactDB.createEmergencyContact(info, userId)
