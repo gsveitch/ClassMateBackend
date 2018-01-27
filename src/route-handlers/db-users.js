@@ -131,19 +131,38 @@ const findStudentInfo = (id) => {
   })
     .then(result => {
       const student = result.dataValues
-      return db.EmergencyContact.find({
-        where: {
-          id: student.id_emergencyContact
-        },
-      })
-      .then(emergencyContact => {
+      if (student.id_emergencyContact) {
+        return db.EmergencyContact.find({
+          where: {
+            id: student.id_emergencyContact
+          },
+        })
+        .then(emergencyContact => {
+          const result = emergencyContact.dataValues
+          console.log(student, 'this is student');
+          console.log(emergencyContact, 'this is emergencyContact');
+          const format = {
+            nameFirst: student.nameFirst,
+            nameLast: student.nameLast,
+            photoUrl: student.photoUrl,
+            emergencyContact: {
+              nameFirst: result.nameFirst,
+              nameLast: result.nameLast,
+              address: result.address,
+              phone: result.email
+            }
+          }
+          return format;
+        })
+        .catch(err => console.error(err));
+      } else {
         const format = {
-          student,
-          emergencyContact
+          nameFirst: student.nameFirst,
+          nameLast: student.nameLast,
+          photoUrl: student.photoUrl
         }
         return format;
-      })
-      .catch(err => console.error(err));
+      }
     })
     .catch(err => console.error(err));
 };
