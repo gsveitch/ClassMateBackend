@@ -232,8 +232,6 @@ app.post('/createEmergencyContact', (req, res) => {
 });
 
 // ===============================
-
-// ===============================
 // Assignment Routes =============
 // ===============================
 app.post('/createAssignment', (req, res) => {
