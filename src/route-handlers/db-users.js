@@ -64,7 +64,6 @@ const comparePassword = (studentPassword, hash) => {
 
 // Student Creation/Find
 const findOrCreateStudent = (student) => {
-  console.log('student: ', student);
   student.password = hashPassword(student.password);
   return db.User.findOrCreate({
     where: {
@@ -116,11 +115,12 @@ const findStudent = (student) => {
     }, 
   })
   .then(result => {
-    if (comparePassword(student.password, result.password)) {
-      console.log('password match');
+    if(result === null){
+      return 'user not found'
+    }else if (comparePassword(student.password, result.password)) {
       return result;
     } else {
-      return 'Failed Login Attempt';
+      return 'incorrect password';
     }
   })
   .catch(err => console.error(err));
