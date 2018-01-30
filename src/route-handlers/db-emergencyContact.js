@@ -13,7 +13,7 @@ const createEmergencyContact = (info, userId) => {
       // console.log(result, 'result of createEmergencyContact');
       const emergencyContactId = result.dataValues.id; 
       // console.log(userId, 'userId in .then of createEmergencyContact');
-      db.User.update({ id_emergencyContact: emergencyContactId }, { where: { id: userId } })
+      return db.User.update({ id_emergencyContact: emergencyContactId }, { where: { id: userId } })
         .then(user => {
           const format = {
             result,
