@@ -319,8 +319,9 @@ app.get('/classInfo', (req, res) => {
         .then(participants => {
           const students = [];
           participants.forEach(el => {
+            console.log(el);
             if (!el.email) {
-              students.push({ id: el.id, nameFirst: el.nameFirst, nameLast: el.nameLast, gradeLevel: el.gradeLevel, photoUrl: el.photoUrl, id_emergencyContact: el.id_emergencyContact });
+              students.push({ id: el.id, nameFirst: el.nameFirst, nameLast: el.nameLast, participantId: el.participantId });
             }
           });
           const format = {
