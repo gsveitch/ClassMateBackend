@@ -96,18 +96,32 @@ app.post('/login', (req,res) => {
   );
 });
 
+app.post('/studentLogin', (req, res) => {
+  const student = req.body;
+  userDB.findStudent(student)
+    .then(dbLoginResult => {
+      console.log('dbLoginResult: ', dbLoginResult);
+      if(dbLoginResult === 'Failed Login Attempt'){
+        res.send('Incorrect Password');
+      }else{
+        res.send(dbLoginResult);
+      }
+    })
+    .catch(err => {
+      console.error('findStudent error: ', err);
+    });
+});
+
 app.post('/studentCreate', (req, res) => {
   const student = req.body;
   userDB.findOrCreateStudent(student)
     .then(student => {
-      // console.log(student);
       res.status(201).send(student);
     })
     .catch(err => console.error(err));
 });
 
 app.get('/studentInformation', (req, res) => {
-  const tempStudentId = 2;
   const studentId = req.query.id;
   userDB.findStudentInfo(studentId)
     .then(result => res.status(201).send(result))
@@ -181,9 +195,8 @@ app.post('/funStuff/:id', (req, res) => {
     uploadParams.Key = req.files.document.name;
     s3.upload(uploadParams, function (err, data) {
       if (err) {
-        console.log('Error', err);
+        console.error('Error', err);
       } if (data) {
-        console.log('Upload Success', data.Location);
         const document = data.Location;
         funStuffDB.createFunStuff(sessionID, document, typeFinal)
           .then(result => result)
@@ -287,8 +300,6 @@ app.get('/dashboard', (req, res) => {
       // console.log('sessionInfo: ', sessionInfo);
       calApi.getCalendar(sessionInfo)
         .then((formattedCalendar) => {
-          console.log(formattedCalendar, 'this is formattedCalendar');
-          // console.log('formatted calendar: ', formattedCalendar);
           const reformat = {
             sessionInfo,
             formattedCalendar
