@@ -107,7 +107,8 @@ app.post('/studentCreate', (req, res) => {
 });
 
 app.get('/studentInformation', (req, res) => {
-  const studentId = 2;
+  const tempStudentId = 2;
+  const studentId = req.query.id;
   userDB.findStudentInfo(studentId)
     .then(result => res.status(201).send(result))
     .catch(err => console.error(err));
@@ -138,8 +139,8 @@ app.post('/addClass', (req, res) => {
 // ===============================
 // Homework Route ================
 // ===============================
-app.post('/upload/:userId/:sessionId', (req, res) => {
-  const { userId, sessionId } = req.params;
+app.post('/upload/:participantId/:assignmentID', (req, res) => {
+  const { participantId, assignmentID } = req.params;
   const newPhoto = req.files['photo'].data.toString('base64');
   const type = req.files['photo'].mimetype;
   //const userEmail = req.params[0];
@@ -151,8 +152,8 @@ app.post('/upload/:userId/:sessionId', (req, res) => {
     } else {
       const photoUrl = photo.url;
       // console.log(photo.url); 
-      homeworkDB.uploadHomework(userId, sessionId, photoUrl)
-        .then(result => result)
+      homeworkDB.uploadHomework(participantId, assignmentID, photoUrl)
+        .then(result => res.status(201).send(result))
         .catch(err => console.error(err));
     }
   });
@@ -221,11 +222,12 @@ app.post('/createEmergencyContact', (req, res) => {
 // ===============================
 // Assignment Routes =============
 // ===============================
-app.get('/createAssignment', (req, res) => {
+app.post('/createAssignment', (req, res) => {
+  console.log(req.body);
   const info = {
-    sessionId: 2,
-    title: 'Algebra Project 1',
-    dueDate: '02/14/2018'
+    sessionId: req.body.sessionId,
+    title: req.body.assignment.title,
+    dueDate: req.body.assignment.dueDate
   };
   assignmentDB.findOrCreateAssignment(info)
     .then(result => res.status(201).send(result))
@@ -285,6 +287,7 @@ app.get('/dashboard', (req, res) => {
       // console.log('sessionInfo: ', sessionInfo);
       calApi.getCalendar(sessionInfo)
         .then((formattedCalendar) => {
+          console.log(formattedCalendar, 'this is formattedCalendar');
           // console.log('formatted calendar: ', formattedCalendar);
           const reformat = {
             sessionInfo,
@@ -313,6 +316,7 @@ app.get('/classInfo', (req, res) => {
             assignments,
             students
           };
+          // console.log(format, 'format from /classInfo');
           res.status(201).send(format);
         })
         .catch(err => console.error(err));

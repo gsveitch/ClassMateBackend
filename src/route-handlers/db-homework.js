@@ -1,9 +1,11 @@
 const Sequelize = require('sequelize');
 const db = require('../../app/seeders/db.js');
 
-const uploadHomework = (id, photoUrl) => {
-  db.Homework.create({
-    id_participant: id,
+const uploadHomework = (participantId, assignmentId, photoUrl) => {
+  // console.log(participantId, 'this is participantID in uploadHomework');
+  return db.Homework.create({
+    id_participant: participantId,
+    id_assignment: assignmentId,
     photoUrl
   })
     .then(result => result)
